@@ -143,38 +143,56 @@ export const site = {
     {
       id: "vykopy",
       title: "Zemní a výkopové práce",
-      text: "Základy, přípojky, jímky, bazény a výkopy přesně podle potřeby pozemku.",
-      bullets: ["Základy a pasy", "Přípojky vody, kanalizace, elektro", "Jímky, ČOV, bazény"],
+      text: "Základy, přípojky, jímky, bazény i vrtání děr na oplocení – přesně podle pozemku.",
+      bullets: [
+        "Základy a pasy",
+        "Přípojky vody, kanalizace, elektro",
+        "Jímky, ČOV, bazény",
+        "Vrtání děr na oplocení",
+      ],
       image: "/photos/placeholder/pc38mr-action.webp",
       imageAlt: "Komatsu PC38MR při výkopových pracích",
     },
     {
       id: "teren",
       title: "Terénní úpravy",
-      text: "Srovnání, modelace a příprava pozemku před stavbou nebo zahradou.",
-      bullets: ["Srovnání a modelace", "Příprava pozemku", "Drenáže a odvodnění"],
+      text: "Srovnání, modelace, kátrování zeminy a příprava pozemku před stavbou nebo zahradou.",
+      bullets: [
+        "Srovnání a modelace",
+        "Kátrování zeminy",
+        "Příprava pozemku",
+        "Drenáže a odvodnění",
+      ],
       image: "/photos/pc38mr-studio.webp",
       imageAlt: "Minibagr Komatsu PC38MR-5",
     },
     {
       id: "preprava",
-      title: "Přeprava strojů",
-      text: "Bagr i kontejner dovezeme vlastním MAN TGL 12.220 s plošinou MULTITEC.",
-      bullets: ["Vlastní doprava", "Naložení a vyložení", "Domažlicko i dál po domluvě"],
+      title: "Přeprava",
+      text: "Plošina s navijákem – stroje, auta i jiné náklady. Využijete ji i samostatně, bez bagru; po domluvě i jako odtah.",
+      bullets: [
+        "Stroje, auta i různé náklady",
+        "Naviják – možnost odtahu",
+        "Vlastní MAN TGL 12.220",
+      ],
       image: "/photos/man-tgl-real.webp",
       imageAlt: "MAN TGL 12.220 s plošinou MULTITEC",
     },
     {
       id: "sut",
-      title: "Odvoz suti a kontejner",
-      text: "Přistavíme plato nebo suťový kontejner 4,5 m (~5 m³) a odvezeme materiál na skládku.",
-      bullets: ["Kontejner 4,5 m (~5 m³)", "Odvoz suti a zeminy", "Likvidace dle druhu"],
+      title: "Kontejnery a odvoz suti",
+      text: "Přistavíme suťový nebo plošinový kontejner 4,5 m (~5 m³) – i bez bagru, jen na odvoz materiálu.",
+      bullets: [
+        "Suťový i plošinový kontejner",
+        "Odvoz suti a zeminy",
+        "Likvidace dle druhu",
+      ],
       image: "/photos/placeholder/kontejner-sutovy.webp",
       imageAlt: "Suťový kontejner 4,5 m",
     },
   ],
   servicesIntro:
-    "Kompletní zemní práce i kontejnerová doprava – od výkopu po odvoz materiálu.",
+    "Výkopy, terén, přeprava i kontejnery – každou techniku i zvlášť, podle toho, co potřebujete.",
   // Interní poznámky (nerenderovat na webu): studio stills Dreamina (28. 10. 2026);
   // MAN – ověřit u Zbyňka současné naložení; kontejnery – délka 4,5 m / objem ~5 m³ dle BRIEF (ověřit u provozovatele).
   fleet: [
@@ -201,7 +219,7 @@ export const site = {
         { label: "Výkon", value: 220, unit: "k", decimals: 0 },
         { label: "Nosnost plošiny", value: ex("[t – doplnit]"), unit: "" },
       ],
-      blurb: "Bagr i kontejner dovezeme vlastním MAN – naložení a vyložení v ceně dopravy.",
+      blurb: "Plošina s navijákem – stroje, auta i jiné náklady; po domluvě i odtah. Dá se použít samostatně.",
     },
     {
       id: "kontejnery",
@@ -215,7 +233,7 @@ export const site = {
         { label: "Typy", value: "plato + suťový", unit: "" },
         { label: "Max. náklad", value: ex("[t – doplnit]"), unit: "" },
       ],
-      blurb: "Délka 4,5 m, objem cca 5 m³ – plato i suťový. Přistavení a odvoz na místě.",
+      blurb: "Suťový i plošinový, 4,5 m (~5 m³). Přistavení a odvoz – i bez bagru, jen na materiál.",
     },
   ],
   pricing: [
@@ -317,7 +335,7 @@ export const site = {
       detail: "hloubka výkopu",
     },
   ],
-  truckCopy: "Bagr i kontejner přivezeme sami – vlastním MAN TGL 12.220.",
+  truckCopy: "Přeprava vlastní plošinou MAN TGL 12.220 – stroje, auta i jiné náklady.",
   gallery: [
     {
       src: "/photos/man-tgl-real.webp",
@@ -357,7 +375,7 @@ export const site = {
     },
     {
       q: "Na jaké práce se minibagr hodí?",
-      a: "Základy, přípojky (voda, kanalizace, elektro), bazény, jímky a ČOV, plotové základy, drenáže, srovnání a modelace terénu, příprava pozemku.",
+      a: "Základy, přípojky (voda, kanalizace, elektro), bazény, jímky a ČOV, vrtání děr na oplocení, drenáže, srovnání, kátrování zeminy a příprava pozemku.",
     },
     {
       q: "Kam se bagr vejde?",
@@ -395,8 +413,8 @@ export const site = {
   inquiryTypes: [
     { value: "vykop", label: "Výkop" },
     { value: "teren", label: "Terénní úpravy" },
-    { value: "preprava", label: "Přeprava stroje" },
-    { value: "sut", label: "Odvoz suti + kontejner" },
+    { value: "preprava", label: "Přeprava" },
+    { value: "sut", label: "Kontejnery / odvoz suti" },
     { value: "jine", label: "Jiné" },
   ],
   meta: {
