@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import { site, unwrap } from "@/content/site";
+import { site, siteConfig, unwrap } from "@/content/site";
 import { Placeholder } from "@/components/ui/Placeholder";
 
 export function Footer() {
@@ -10,36 +9,15 @@ export function Footer() {
     <footer className="mt-10 border-t-2 border-komatsu-yellow bg-void pt-20 pb-16 md:mt-14 md:pt-24 md:pb-20">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-12 md:gap-10 md:px-8">
         <div className="md:col-span-4">
-          <Image
-            src="/brand/gts-logo-transparent.svg"
-            alt="G.T.S. Poběžovice"
-            width={120}
-            height={52}
-            className="h-12 w-auto"
-          />
+          <p className="font-display text-xl uppercase leading-tight tracking-wide text-white">
+            <Placeholder value={site.name} />
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-white/70">{siteConfig.tagline}</p>
           <p className="mt-5 text-sm leading-relaxed text-white/70">
-            Provozuje <Placeholder value={site.operator} />
+            Provozovatel: {siteConfig.billing.company}, IČO {siteConfig.billing.ico}, DIČ{" "}
+            {siteConfig.billing.dic}, {siteConfig.billing.address}.
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-white/70">
-            Sídlo: <Placeholder value={site.hqAddress} />
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-white/70">
-            {site.registry}
-          </p>
-          <p className="mt-2 font-mono text-[11px] text-white/60">
-            IČO: <Placeholder value={site.ico} /> · DIČ:{" "}
-            <Placeholder value={site.dic} />
-          </p>
-          <p className="mt-4 text-sm text-white/45">
-            <a
-              href={site.companyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-4 transition hover:text-white"
-            >
-              gts-pobezovice.cz
-            </a>
-          </p>
+          <p className="mt-2 text-sm leading-relaxed text-white/70">{site.registry}</p>
         </div>
 
         <div className="md:col-span-4">

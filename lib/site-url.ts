@@ -1,4 +1,4 @@
-import { site, unwrap } from "@/content/site";
+import { siteConfig } from "@/content/site";
 
 /** Vercel production environment (ne preview/dev). */
 export function isProductionDeploy() {
@@ -15,8 +15,8 @@ function isVercelAppHost(url: string): boolean {
 
 /**
  * Veřejná origin URL pro canonical / OG / JSON-LD.
- * 1) NEXT_PUBLIC_SITE_URL — nastav na aktuální URL, dokud minibagr-gts.cz neběží
- * 2) produkce → site.domain
+ * 1) NEXT_PUBLIC_SITE_URL — aktuální URL, dokud není nasazená doména z siteConfig
+ * 2) produkce → siteConfig.url
  * 3) preview → VERCEL_URL
  */
 export function siteOrigin() {
@@ -24,7 +24,7 @@ export function siteOrigin() {
   if (fromEnv) return fromEnv;
 
   if (isProductionDeploy()) {
-    return `https://${unwrap(site.domain)}`;
+    return siteConfig.url.replace(/\/$/, "");
   }
 
   if (process.env.VERCEL_URL) {

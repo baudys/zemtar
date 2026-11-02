@@ -62,7 +62,7 @@ if (process.env.NODE_ENV === "production") {
   const examples = collectExamplePaths(site);
   if (examples.length) {
     console.warn(
-      `[GTS] Zbývá ${examples.length} ukázkových hodnot (example: true). Nahradit před spuštěním:`,
+      `[site] Zbývá ${examples.length} ukázkových hodnot (example: true). Nahradit před spuštěním:`,
       examples.slice(0, 12).join(", "),
       examples.length > 12 ? "…" : "",
     );

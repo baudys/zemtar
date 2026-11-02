@@ -8,7 +8,7 @@ import {
   type FormEvent,
 } from "react";
 import { track } from "@vercel/analytics";
-import { formatCzk, site, unwrap } from "@/content/site";
+import { formatCzk, site, siteConfig, unwrap } from "@/content/site";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Section";
@@ -203,6 +203,15 @@ export function Contact() {
               </dt>
               <dd>
                 <Placeholder value={site.openingHours} />
+              </dd>
+            </div>
+            <div>
+              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
+                Provozovatel
+              </dt>
+              <dd className="text-sm leading-relaxed text-white/70">
+                {siteConfig.billing.company}, IČO {siteConfig.billing.ico}, DIČ{" "}
+                {siteConfig.billing.dic}, {siteConfig.billing.address}.
               </dd>
             </div>
           </dl>

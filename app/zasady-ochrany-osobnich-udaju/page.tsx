@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { site, unwrap } from "@/content/site";
+import { site, siteConfig } from "@/content/site";
 import { Placeholder } from "@/components/ui/Placeholder";
 
 export const metadata: Metadata = {
@@ -18,10 +18,10 @@ export default function PrivacyPage() {
         Zásady zpracování osobních údajů
       </h1>
       <p className="mt-6">
-        Správce osobních údajů je <Placeholder value={site.operator} />, IČO{" "}
-        <Placeholder value={site.ico} />, DIČ <Placeholder value={site.dic} />,
-        se sídlem <Placeholder value={site.hqAddress} />. {site.registry}{" "}
-        Kontaktní e-mail: <Placeholder value={site.email} />. Provozovna:{" "}
+        Správce osobních údajů je {siteConfig.billing.company}, IČO{" "}
+        {siteConfig.billing.ico}, DIČ {siteConfig.billing.dic}, se sídlem{" "}
+        {siteConfig.billing.address}. {site.registry} Kontaktní e-mail:{" "}
+        <Placeholder value={site.email} />. Provozovna:{" "}
         <Placeholder value={site.address} />.
       </p>
       <p className="mt-4">
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
         ÚOOÚ.
       </p>
       <p className="mt-8 text-sm text-white/50">
-        {unwrap(site.name)} · {unwrap(site.domain)}
+        {siteConfig.name} · <Placeholder value={site.domain} />
       </p>
     </main>
   );

@@ -1,4 +1,4 @@
-import { site, unwrap } from "@/content/site";
+import { site, siteConfig, unwrap } from "@/content/site";
 import { siteOrigin } from "@/lib/site-url";
 
 export function localBusinessJsonLd() {
@@ -6,11 +6,11 @@ export function localBusinessJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: unwrap(site.name),
-    legalName: unwrap(site.operator),
+    name: siteConfig.name,
+    legalName: siteConfig.billing.company,
     url: origin,
-    telephone: unwrap(site.phone),
-    email: unwrap(site.email),
+    telephone: siteConfig.phone,
+    email: siteConfig.email,
     image: `${origin}/opengraph-image`,
     address: {
       "@type": "PostalAddress",

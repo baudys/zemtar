@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { track } from "@vercel/analytics";
-import { site, unwrap } from "@/content/site";
+import { site, siteConfig, unwrap } from "@/content/site";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
@@ -29,16 +28,8 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-8">
-        <Link href="#hero" className="flex items-center gap-3" aria-label={unwrap(site.name)}>
-          <Image
-            src="/brand/gts-logo.svg"
-            alt="G.T.S. Poběžovice"
-            width={88}
-            height={40}
-            className="h-9 w-auto"
-            priority
-          />
-          <span className="hidden font-display text-sm uppercase tracking-wide text-white sm:block">
+        <Link href="#hero" className="flex min-w-0 items-center" aria-label={siteConfig.name}>
+          <span className="max-w-[9.5rem] font-display text-[0.7rem] uppercase leading-[1.05] tracking-wide text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)] sm:max-w-none sm:text-sm">
             <Placeholder value={site.name} />
           </span>
         </Link>
@@ -68,7 +59,7 @@ export function Header() {
             className="!px-3 !py-2 text-xs md:!px-4"
             onClick={() => track("cta_click", { source: "header" })}
           >
-            Poptat bagr
+            {site.hero.cta}
           </Button>
           <button
             type="button"

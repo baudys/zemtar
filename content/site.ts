@@ -1,7 +1,53 @@
 /**
  * Jediný zdroj pravdy pro texty a kontakty.
+ * Veřejný název, doména a kontakty: `siteConfig`.
+ * G.T.S. smí být jen v `siteConfig.billing` (fakturace).
  * Hodnoty s example: true jsou UKÁZKOVÁ DATA – nahradit před spuštěním (BRIEF kap. 8–9).
  */
+
+export type SiteBilling = {
+  company: string;
+  ico: string;
+  dic: string;
+  address: string;
+};
+
+export type SiteConfig = {
+  name: string;
+  domain: string;
+  url: string;
+  email: string;
+  phone: string;
+  /** `tel:` bez mezer, odvozené z `phone`. */
+  phoneTel: string;
+  tagline: string;
+  serviceArea: string;
+  billing: SiteBilling;
+};
+
+/** Jediná nezadaná veřejná doména. `url` se z ní skládá. */
+const domain = "{{DOMENA}}";
+
+/** Ověřený telefon z původního `site` – `phoneTel` se skládá z něj. */
+const phone = "+420 724 518 782";
+
+export const siteConfig: SiteConfig = {
+  name: "Zemní práce Domažlicko",
+  domain,
+  url: `https://${domain}`,
+  email: "svec@gts-pce.cz",
+  phone,
+  phoneTel: `tel:${phone.replace(/[^\d+]/g, "")}`,
+  tagline: "Zemní práce od A do Z",
+  serviceArea:
+    "Působíme hlavně na Domažlicku a v okolí, po domluvě přijedeme i dál.",
+  billing: {
+    company: "G.T.S. Poběžovice, spol. s r.o.",
+    ico: "25921185",
+    dic: "CZ25921185",
+    address: "Na Sadech 12, 252 25 Zbuzany",
+  },
+};
 
 export type ExampleString = {
   value: string;
@@ -40,25 +86,25 @@ export function collectExamplePaths(
 }
 
 export const site = {
-  name: "Zemní práce Domažlicko",
-  domain: ex("minibagr-gts.cz"),
-  operator: "G.T.S. Poběžovice, spol. s r.o.",
-  ico: "25921185",
-  dic: "CZ25921185",
-  phone: "+420 724 518 782",
-  phoneHref: "tel:+420724518782",
-  email: "svec@gts-pce.cz",
-  emailHref: "mailto:svec@gts-pce.cz",
-  /** Provozovna (Kontakt, JSON-LD). Sídlo je `hqAddress`. */
+  name: siteConfig.name,
+  domain: ex(siteConfig.domain),
+  /** Právnická osoba – jen fakturace, ne značka webu. */
+  operator: siteConfig.billing.company,
+  ico: siteConfig.billing.ico,
+  dic: siteConfig.billing.dic,
+  phone: siteConfig.phone,
+  phoneHref: siteConfig.phoneTel,
+  email: siteConfig.email,
+  emailHref: `mailto:${siteConfig.email}`,
+  /** Provozovna (Kontakt, JSON-LD). Sídlo je `billing.address`. */
   address: "Žižkova 188, 345 22 Poběžovice",
   /** Sídlo dle ARES; zápis v OR ještě ověřit se Zbyňkem. */
-  hqAddress: "Na Sadech 12, 252 25 Zbuzany",
+  hqAddress: siteConfig.billing.address,
   registry:
     "Zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl C, vložka 103687.",
   openingHours: "Po–Čt 7:00–16:30, Pá 7:00–11:00",
-  companyUrl: "https://www.gts-pobezovice.cz",
   contactPerson: "Zbyněk Švec",
-  areaLabel: "Domažlicko a okolí do 50 km od Poběžovic",
+  areaLabel: siteConfig.serviceArea,
   geo: {
     lat: 49.5107,
     lng: 12.8028,
@@ -67,11 +113,13 @@ export const site = {
   vatRate: 0.21,
   responseSla: ex("1 pracovního dne"),
   hero: {
-    h1: "Pronájem minibagru s obsluhou",
+    h1: "Zemní práce od A do Z",
+    /** Dva řádky pro display font; musí dát dohromady `h1`. */
+    h1Lines: ["Zemní práce", "od A do Z"] as const,
     subtitle:
-      "Zemní a výkopové práce, terénní úpravy, doprava i odvoz suti – Domažlicko a okolí.",
-    cta: "Poptat bagr",
-    secondary: "Ceník",
+      "Výkopy, terénní úpravy, přípojky, odvoz suti a kontejnerová doprava. Postaráme se o celou zakázku – od přistavení techniky po odvoz materiálu.",
+    cta: "Nezávazně poptat",
+    secondary: "Zavolejte nám",
   },
   claim: {
     title: "Jedna firma, jeden telefon, hotová práce.",
@@ -82,6 +130,16 @@ export const site = {
     ],
     years: ex("[X let praxe]"),
     jobs: ex("[X zakázek]"),
+  },
+  pricingTeaser: {
+    title: "Orientační ceník",
+    text: "Podívejte se na hodinovky a dopravu – přesnou cenu vždy potvrdíme předem.",
+    cta: "Zobrazit ceník",
+  },
+  inquiryTeaser: {
+    title: "Nezávazná poptávka",
+    text: "Popište zakázku ve formuláři – ozveme se a vše probereme po telefonu.",
+    cta: "Vyplnit poptávku",
   },
   nav: [
     { href: "#sluzby", label: "Služby" },
@@ -112,7 +170,7 @@ export const site = {
       id: "preprava",
       title: "Přeprava strojů",
       text: "Bagr i kontejner dovezeme vlastním MAN TGL 12.220 s plošinou MULTITEC.",
-      bullets: ["Vlastní doprava", "Naložení a vyložení", "Domažlicko a okolí"],
+      bullets: ["Vlastní doprava", "Naložení a vyložení", "Domažlicko i dál po domluvě"],
       image: "/photos/man-tgl-real.webp",
       imageAlt: "MAN TGL 12.220 s plošinou MULTITEC",
     },
@@ -125,6 +183,8 @@ export const site = {
       imageAlt: "Suťový kontejner 4,5 m",
     },
   ],
+  servicesIntro:
+    "Kompletní zemní práce i kontejnerová doprava – od výkopu po odvoz materiálu.",
   // Interní poznámky (nerenderovat na webu): studio stills Dreamina (28. 10. 2026);
   // MAN – ověřit u Zbyňka současné naložení; kontejnery – délka 4,5 m / objem ~5 m³ dle BRIEF (ověřit u provozovatele).
   fleet: [
@@ -296,7 +356,7 @@ export const site = {
     },
     {
       src: "/photos/placeholder/man-tgl-bok.webp",
-      alt: "MAN TGL z boku (placeholder – souhlas G.T.S.)",
+      alt: "MAN TGL z boku (placeholder – souhlas provozovatele)",
       example: true,
     },
   ],
@@ -350,9 +410,8 @@ export const site = {
     { value: "jine", label: "Jiné" },
   ],
   meta: {
-    title: "Pronájem minibagru s obsluhou | Zemní práce Domažlicko",
-    description:
-      "Pronájem minibagru Komatsu PC38MR s obsluhou a dopravou. Zemní práce, terénní úpravy a odvoz suti na Domažlicku do 50 km od Poběžovic.",
+    title: `${siteConfig.tagline} | ${siteConfig.name}`,
+    description: `Kompletní zemní práce od A do Z – výkopy, terénní úpravy, přípojky, odvoz suti a kontejnerová doprava. ${siteConfig.serviceArea}`,
   },
 } as const;
 

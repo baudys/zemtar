@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { siteConfig } from "@/content/site";
 
 const phonePattern = /^[0-9 +()\-]{9,}$/;
 
@@ -122,7 +123,7 @@ export async function submitInquiry(
   const hasMailBackend = Boolean(process.env.RESEND_API_KEY && process.env.INQUIRY_TO);
 
   if (!hasMailBackend) {
-    const to = process.env.INQUIRY_TO || "poptavka@example.cz";
+    const to = process.env.INQUIRY_TO || siteConfig.email;
     const subject = encodeURIComponent(`Poptávka minibagr – ${data.place}`);
     const body = encodeURIComponent(
       [

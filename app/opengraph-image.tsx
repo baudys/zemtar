@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { site, unwrap } from "@/content/site";
+import { siteConfig } from "@/content/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -21,13 +21,13 @@ export default function OgImage() {
         }}
       >
         <div style={{ fontSize: 28, color: "#F5B800", letterSpacing: 4 }}>
-          G.T.S. POBĚŽOVICE
+          {siteConfig.tagline}
         </div>
         <div style={{ fontSize: 64, fontWeight: 800, marginTop: 16, lineHeight: 1.05 }}>
-          {unwrap(site.name)}
+          {siteConfig.name}
         </div>
         <div style={{ fontSize: 28, marginTop: 20, maxWidth: 900, color: "#ddd" }}>
-          Pronájem minibagru s obsluhou · Domažlicko
+          {siteConfig.serviceArea}
         </div>
         <div
           style={{
@@ -41,7 +41,7 @@ export default function OgImage() {
             alignSelf: "flex-start",
           }}
         >
-          Poptat bagr
+          Nezávazně poptat
         </div>
       </div>
     ),
