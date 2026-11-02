@@ -11,6 +11,8 @@ type Props = {
   onChange: (value: number) => void;
   /** Formatted label shown above the thumb. */
   thumbLabel: string;
+  /** Menší vertikální rezerva (např. ceník v jednom viewportu). */
+  compact?: boolean;
   "aria-valuetext"?: string;
   "aria-label"?: string;
 };
@@ -23,6 +25,7 @@ export function YellowRange({
   value,
   onChange,
   thumbLabel,
+  compact = false,
   "aria-valuetext": ariaValueText,
   "aria-label": ariaLabel,
 }: Props) {
@@ -32,9 +35,12 @@ export function YellowRange({
   const pct = ((value - min) / span) * 100;
 
   return (
-    <div className="relative mt-8 pt-7">
+    <div className={compact ? "relative mt-2 pt-4" : "relative mt-8 pt-7"}>
       <div
-        className="pointer-events-none absolute top-0 -translate-x-1/2 font-display text-sm text-komatsu-yellow tabular-nums"
+        className={[
+          "pointer-events-none absolute top-0 -translate-x-1/2 font-display text-komatsu-yellow tabular-nums",
+          compact ? "text-xs" : "text-sm",
+        ].join(" ")}
         style={{ left: `${pct}%` }}
         aria-hidden
       >

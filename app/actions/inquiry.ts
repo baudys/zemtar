@@ -51,6 +51,10 @@ const inquirySchema = z.object({
     .min(1, "Zadejte e-mail")
     .email("Zadejte platný e-mail"),
   note: z.string().trim().optional(),
+  /** Orientační odhad z ceníku – kontext pro lepší pochopení poptávky. */
+  contextCenik: z.string().trim().max(4000).optional(),
+  /** Výběr z konfigurátoru Technika. */
+  contextTechnika: z.string().trim().max(2000).optional(),
   consent: z.literal("on", {
     error: "Potvrďte souhlas se zpracováním osobních údajů",
   }),
@@ -172,7 +176,9 @@ function buildPlainBody(
     .map((s) => serviceLabelByValue[s] ?? s)
     .join(", ");
 
-  return [
+  // Priorita v e-mailu: 1) poptávka, 2) ceník, 3) konfigurátor techniky
+  const sections: string[] = [
+    "— POPTÁVKA —",
     `Služby: ${serviceLabels}`,
     `Místo: ${data.place}`,
     `Termín: ${data.term || "—"}`,
@@ -180,12 +186,30 @@ function buildPlainBody(
     `Telefon: ${data.phone}`,
     `E-mail: ${data.email}`,
     "",
-    data.note || "",
+    data.note?.trim() ? `Poznámka:\n${data.note.trim()}` : "Poznámka: —",
     "",
     photoNames.length
       ? `Fotky: ${photoNames.join(", ")}`
       : "Fotky: —",
-  ].join("\n");
+  ];
+
+  if (data.contextCenik?.trim()) {
+    sections.push(
+      "",
+      "— CENÍK (orientační odhad) —",
+      data.contextCenik.trim(),
+    );
+  }
+
+  if (data.contextTechnika?.trim()) {
+    sections.push(
+      "",
+      "— TECHNIKA (konfigurátor) —",
+      data.contextTechnika.trim(),
+    );
+  }
+
+  return sections.join("\n");
 }
 
 async function sendViaResend(opts: {
@@ -261,6 +285,9 @@ export async function submitInquiry(
     phone: values.phone,
     email: values.email,
     note: values.note,
+    contextCenik: String(formData.get("contextCenik") ?? "").trim() || undefined,
+    contextTechnika:
+      String(formData.get("contextTechnika") ?? "").trim() || undefined,
     consent: formData.get("consent"),
     website: String(formData.get("website") ?? ""),
     startedAt: String(formData.get("startedAt") ?? ""),
@@ -321,6 +348,8 @@ export async function submitInquiry(
     phone: data.phone,
     email: data.email,
     note: data.note,
+    contextCenik: data.contextCenik,
+    contextTechnika: data.contextTechnika,
     photos: photos.map((p) => ({
       filename: p.filename,
       contentType: p.contentType,

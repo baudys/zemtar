@@ -19,12 +19,12 @@ export default function HomePage() {
         <ScrollSequence />
         <Services />
         <TruckDriveBy />
-        <Fleet />
-        <TrackDivider />
-        <Area />
-        <TrackDivider />
-        <Faq />
         <QuoteProvider>
+          <Fleet />
+          <TrackDivider />
+          <Area />
+          <TrackDivider />
+          <Faq />
           <TrackDivider />
           <Pricing />
           <TrackDivider />

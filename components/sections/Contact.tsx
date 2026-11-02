@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { track } from "@vercel/analytics";
-import { formatCzk, site, siteConfig, unwrap } from "@/content/site";
+import { formatCzk, site, unwrap } from "@/content/site";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Button } from "@/components/ui/Button";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -143,7 +143,14 @@ export function Contact() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const photosInputId = useId();
   const servicesGroupId = useId();
-  const { applied, clearApplied } = useQuote();
+  const {
+    applied,
+    clearApplied,
+    estimate,
+    fleet,
+    fleetApplied,
+    clearFleetApplied,
+  } = useQuote();
   const phoneHref = unwrap(site.phoneHref);
   const mailtoFallback = `mailto:${unwrap(site.email)}`;
   const values: InquiryValues | undefined = state.values;
@@ -162,7 +169,12 @@ export function Contact() {
         fromState.length > 0 ? fromState : fromUrl.length > 0 ? fromUrl : [],
       );
       if (values?.note != null && values.note !== "") {
-        setNote(values.note);
+        // starší verze vkládaly odhad do poznámky — nechat jen uživatelský text
+        setNote(
+          values.note
+            .replace(/\n?\n?Odhad z (?:konfigurátoru|ceníku)[\s\S]*$/m, "")
+            .trim(),
+        );
       }
     });
     // jen při mount / obnově hodnot po chybě
@@ -186,22 +198,22 @@ export function Contact() {
       });
       setSelectedServices([]);
       setPhotoError(null);
+      clearApplied();
+      clearFleetApplied();
     });
-  }, [state.ok]);
+  }, [state.ok, clearApplied, clearFleetApplied]);
 
   useEffect(() => {
-    if (!applied) return;
+    if (!fleetApplied) return;
     queueMicrotask(() => {
-      setNote((prev) => {
-        const withoutOldQuote = prev
-          .replace(/\n?\n?Odhad z konfigurátoru[\s\S]*$/m, "")
-          .trim();
-        return withoutOldQuote
-          ? `${withoutOldQuote}\n\n${applied.noteText}`
-          : applied.noteText;
-      });
+      setSelectedServices((prev) =>
+        prev.includes(fleet.inquirySlug)
+          ? prev
+          : [...prev, fleet.inquirySlug],
+      );
+      setServicesClientError(null);
     });
-  }, [applied]);
+  }, [fleetApplied, fleet.inquirySlug]);
 
   function toggleService(value: string) {
     setServicesClientError(null);
@@ -319,109 +331,96 @@ export function Contact() {
 
   return (
     <Section id="kontakt" tone="panel" className="!border-t-0">
-      <div className="grid gap-14 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <SectionHeader title="Kontakt" />
+      <div className="mx-auto max-w-3xl">
+        <SectionHeader title="Poptávka" />
 
-          {applied ? (
-            <div className="mt-10 border border-line bg-void/50 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
-                  Váš odhad z ceníku
-                </p>
-                <button
-                  type="button"
-                  onClick={clearApplied}
-                  className="cursor-pointer font-mono text-[11px] uppercase tracking-wide text-white/60 hover:text-white"
-                >
-                  Odebrat
-                </button>
-              </div>
-              <ul className="mt-4 space-y-2 text-sm text-white/70">
-                {applied.lines.map((l) => (
-                  <li key={l.id} className="flex justify-between gap-3">
-                    <span>{l.label}</span>
-                    <span className="tabular-nums text-white">
-                      {formatCzk(l.amount)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 font-display text-2xl text-komatsu-yellow">
-                {formatCzk(applied.totalEx)}{" "}
-                <span className="text-sm font-sans font-normal text-white/50">
-                  bez DPH
-                </span>
-              </p>
-            </div>
-          ) : null}
-
-          <dl className="mt-10 space-y-5 text-white/85">
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                Telefon
-              </dt>
-              <dd>
-                <a
-                  href={phoneHref}
-                  className="text-white hover:text-komatsu-yellow"
-                  onClick={() => track("phone_click", { source: "contact" })}
-                >
-                  <Placeholder value={site.phone} />
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                E-mail
-              </dt>
-              <dd>
-                <a
-                  href={`mailto:${unwrap(site.email)}`}
-                  className="hover:text-komatsu-yellow"
-                >
-                  <Placeholder value={site.email} />
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                Provozovna
-              </dt>
-              <dd>
-                <Placeholder value={site.address} />
-              </dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                Provozní doba
-              </dt>
-              <dd>
-                <Placeholder value={site.openingHours} />
-              </dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
-                Provozovatel
-              </dt>
-              <dd className="text-sm leading-relaxed text-white/70">
-                {siteConfig.billing.company}, IČO {siteConfig.billing.ico}, DIČ{" "}
-                {siteConfig.billing.dic}, {siteConfig.billing.address}.
-              </dd>
-            </div>
-          </dl>
-          <Button
-            href={phoneHref}
-            className="mt-8"
-            onClick={() => track("phone_click", { source: "contact_cta" })}
-          >
-            Zavolat
-          </Button>
+        <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-10 sm:gap-y-2">
+          <p className="text-base text-white/85 sm:text-lg">
+            <span className="text-white/60">Telefon: </span>
+            <a
+              href={phoneHref}
+              className="text-white hover:text-komatsu-yellow"
+              onClick={() => track("phone_click", { source: "contact" })}
+            >
+              <Placeholder value={site.phone} />
+            </a>
+          </p>
+          <p className="text-base text-white/85 sm:text-lg">
+            <span className="text-white/60">Provozní doba: </span>
+            <Placeholder value={site.openingHours} />
+          </p>
         </div>
+
+        {applied || fleetApplied ? (
+          <div className="mt-8 space-y-3">
+            {applied ? (
+              <div className="border border-line bg-void/50 p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-sm text-white/65">Váš odhad z ceníku</p>
+                  <button
+                    type="button"
+                    onClick={clearApplied}
+                    className="cursor-pointer text-sm text-white/60 hover:text-white"
+                  >
+                    Odebrat
+                  </button>
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-white/70">
+                  {applied.lines.map((l) => (
+                    <li key={l.id} className="flex justify-between gap-3">
+                      <span>{l.label}</span>
+                      <span className="tabular-nums text-white">
+                        {formatCzk(l.amount)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 font-display text-2xl text-komatsu-yellow">
+                  {formatCzk(applied.totalEx)}{" "}
+                  <span className="text-sm font-sans font-normal text-white/60">
+                    bez DPH
+                  </span>
+                </p>
+              </div>
+            ) : null}
+            {fleetApplied ? (
+              <div className="border border-line bg-void/50 p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-sm text-white/65">
+                    Výběr z konfigurátoru
+                  </p>
+                  <button
+                    type="button"
+                    onClick={clearFleetApplied}
+                    className="cursor-pointer text-sm text-white/60 hover:text-white"
+                  >
+                    Odebrat
+                  </button>
+                </div>
+                <p className="mt-3 font-display text-xl uppercase leading-tight text-white">
+                  {fleet.workLabel}
+                </p>
+                <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <dt className="text-white/60">{fleet.slotALabel}</dt>
+                    <dd className="text-white">{fleet.slotAName}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-white/60">{fleet.slotBLabel}</dt>
+                    <dd className="text-white">{fleet.slotBName}</dd>
+                  </div>
+                </dl>
+              </div>
+            ) : null}
+            <p className="text-sm text-white/60">
+              Odhad i sestava se přiloží k poptávce v e-mailu.
+            </p>
+          </div>
+        ) : null}
 
         {showSuccess ? (
           <div
-            className="flex flex-col items-start justify-center gap-5 border border-line p-6 md:p-8"
+            className="mt-10 flex flex-col items-start justify-center gap-5 border border-line p-6 md:p-8"
             role="status"
             aria-live="polite"
           >
@@ -449,7 +448,7 @@ export function Contact() {
             </div>
           </div>
         ) : (
-          <div>
+          <div className="mt-10">
             <form
               onSubmit={onSubmit}
               className="space-y-5 border border-line p-6 md:p-8"
@@ -457,6 +456,16 @@ export function Contact() {
               noValidate={false}
             >
               <input type="hidden" name="startedAt" value={startedAt} />
+              <input
+                type="hidden"
+                name="contextCenik"
+                value={applied?.noteText ?? estimate.noteText}
+              />
+              <input
+                type="hidden"
+                name="contextTechnika"
+                value={fleet.noteText}
+              />
               <input
                 type="text"
                 name="website"
@@ -466,8 +475,6 @@ export function Contact() {
                 className="hidden"
                 aria-hidden="true"
               />
-
-              <h3 className="font-display text-2xl uppercase">Poptávka</h3>
 
               <fieldset
                 className="min-w-0"
@@ -597,7 +604,7 @@ export function Contact() {
               >
                 <textarea
                   name="note"
-                  rows={applied ? 7 : 4}
+                  rows={4}
                   className={areaClass}
                   value={note}
                   onChange={(e) => setNote(e.target.value)}

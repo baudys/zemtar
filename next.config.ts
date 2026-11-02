@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
       { source: "/textures/:path*", headers: immutableAssetHeaders },
       { source: "/hero/:path*", headers: immutableAssetHeaders },
       { source: "/truck/:path*", headers: immutableAssetHeaders },
+      { source: "/technika/:path*", headers: immutableAssetHeaders },
     ];
   },
 };

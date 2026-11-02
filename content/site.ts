@@ -137,7 +137,7 @@ export const site = {
     { href: "#oblast", label: "Oblast" },
     { href: "#faq", label: "FAQ" },
     { href: "#cenik", label: "Ceník" },
-    { href: "#kontakt", label: "Kontakt" },
+    { href: "#kontakt", label: "Poptávka" },
   ],
   services: [
     {

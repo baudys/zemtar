@@ -34,7 +34,11 @@ function toIso(d: Date): string {
 
 function parseIso(value: string): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const [y, m, d] = value.split("-").map(Number);
+  const parts = value.split("-").map(Number);
+  const y = parts[0];
+  const m = parts[1];
+  const d = parts[2];
+  if (y === undefined || m === undefined || d === undefined) return null;
   const date = new Date(y, m - 1, d);
   if (
     date.getFullYear() !== y ||

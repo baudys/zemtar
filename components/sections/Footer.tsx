@@ -51,7 +51,7 @@ export function Footer() {
             <li className="pt-2 text-white/70">
               Provozovna: <Placeholder value={site.address} />
             </li>
-            <li className="text-white/45">
+            <li className="text-white/60">
               <Placeholder value={site.openingHours} />
             </li>
           </ul>
@@ -69,11 +69,6 @@ export function Footer() {
                 </a>
               </li>
             ))}
-            <li>
-              <a href="#kontakt" className="transition hover:text-white">
-                Poptávka
-              </a>
-            </li>
             <li>
               <Link
                 href="/zasady-ochrany-osobnich-udaju"

@@ -9,6 +9,11 @@ import {
   type ReactNode,
 } from "react";
 import { formatCzk, site, withVat } from "@/content/site";
+import {
+  equipment,
+  workTypes,
+  type WorkId,
+} from "@/src/data/equipment";
 
 const HOURLY =
   site.pricing.find((p) => p.id === "bagr-hodina")?.amountExVat ?? 1200;
@@ -51,6 +56,17 @@ export type QuoteEstimate = QuoteInput & {
   noteText: string;
 };
 
+export type FleetSelection = {
+  workId: WorkId;
+  workLabel: string;
+  inquirySlug: string;
+  slotALabel: string;
+  slotAName: string;
+  slotBLabel: string;
+  slotBName: string;
+  noteText: string;
+};
+
 type QuoteContextValue = {
   draft: QuoteInput;
   setDraft: (patch: Partial<QuoteInput>) => void;
@@ -59,7 +75,40 @@ type QuoteContextValue = {
   applied: QuoteEstimate | null;
   applyToContact: () => QuoteEstimate;
   clearApplied: () => void;
+  /** Aktuální výběr v konfigurátoru Technika (pro e-mail i sync služeb). */
+  fleet: FleetSelection;
+  setFleetWork: (workId: WorkId) => void;
+  /** Uživatel kliknul „Poptat tuto práci“ – přenést službu do formuláře. */
+  fleetApplied: boolean;
+  applyFleetToContact: () => FleetSelection;
+  clearFleetApplied: () => void;
 };
+
+export function buildFleetSelection(workId: WorkId): FleetSelection {
+  const work = workTypes.find((w) => w.id === workId) ?? workTypes[0]!;
+  const [idA, idB] = work.equipmentIds;
+  const itemA = equipment.find((e) => e.id === idA);
+  const itemB = equipment.find((e) => e.id === idB);
+  const [labelA, labelB] = work.slotLabels;
+  const slotAName = itemA?.name ?? idA;
+  const slotBName = itemB?.name ?? idB;
+  const noteText = [
+    `Práce: ${work.label}`,
+    `${labelA}: ${slotAName}`,
+    `${labelB}: ${slotBName}`,
+  ].join("\n");
+
+  return {
+    workId: work.id,
+    workLabel: work.label,
+    inquirySlug: work.inquirySlug,
+    slotALabel: labelA,
+    slotAName,
+    slotBLabel: labelB,
+    slotBName,
+    noteText,
+  };
+}
 
 const QuoteContext = createContext<QuoteContextValue | null>(null);
 
@@ -141,7 +190,6 @@ export function buildEstimate(input: QuoteInput): QuoteEstimate {
   const totalEx = lines.reduce((sum, l) => sum + l.amount, 0);
   const totalInc = withVat(totalEx);
   const noteText = [
-    "Odhad z konfigurátoru (orientační, bez DPH):",
     ...lines.map(
       (l) =>
         `• ${l.label}: ${formatCzk(l.amount)}${l.detail ? ` (${l.detail})` : ""}`,
@@ -173,12 +221,18 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     liquidation: false,
   });
   const [applied, setApplied] = useState<QuoteEstimate | null>(null);
+  const [fleetWorkId, setFleetWorkId] = useState<WorkId>("vykop");
+  const [fleetApplied, setFleetApplied] = useState(false);
 
   const setDraft = useCallback((patch: Partial<QuoteInput>) => {
     setDraftState((prev) => ({ ...prev, ...patch }));
   }, []);
 
   const estimate = useMemo(() => buildEstimate(draft), [draft]);
+  const fleet = useMemo(
+    () => buildFleetSelection(fleetWorkId),
+    [fleetWorkId],
+  );
 
   const applyToContact = useCallback(() => {
     const next = buildEstimate(draft);
@@ -188,6 +242,18 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const clearApplied = useCallback(() => setApplied(null), []);
 
+  const setFleetWork = useCallback((workId: WorkId) => {
+    setFleetWorkId(workId);
+  }, []);
+
+  const applyFleetToContact = useCallback(() => {
+    const next = buildFleetSelection(fleetWorkId);
+    setFleetApplied(true);
+    return next;
+  }, [fleetWorkId]);
+
+  const clearFleetApplied = useCallback(() => setFleetApplied(false), []);
+
   const value = useMemo(
     () => ({
       draft,
@@ -196,8 +262,25 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       applied,
       applyToContact,
       clearApplied,
+      fleet,
+      setFleetWork,
+      fleetApplied,
+      applyFleetToContact,
+      clearFleetApplied,
     }),
-    [draft, setDraft, estimate, applied, applyToContact, clearApplied],
+    [
+      draft,
+      setDraft,
+      estimate,
+      applied,
+      applyToContact,
+      clearApplied,
+      fleet,
+      setFleetWork,
+      fleetApplied,
+      applyFleetToContact,
+      clearFleetApplied,
+    ],
   );
 
   return <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>;
