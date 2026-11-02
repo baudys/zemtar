@@ -242,7 +242,15 @@ export const site = {
       title: "Minibagr s obsluhou",
       amountExVat: 1200,
       unit: "/h",
-      note: "stroj + strojník + palivo",
+      note: "stroj + strojník + palivo; včetně času naložení, přepravy a vyložení",
+      example: true as const,
+    },
+    {
+      id: "prostoj",
+      title: "Prostoj bagru s obsluhou",
+      amountExVat: 700,
+      unit: "/h",
+      note: "čekání na stavbě bez práce",
       example: true as const,
     },
     {
@@ -258,7 +266,7 @@ export const site = {
       title: "Doprava",
       amountExVat: 42,
       unit: "/km",
-      note: "včetně naložení; km tam i zpět",
+      note: "km tam i zpět (auto); čas naložení/vyložení v hodinách bagru",
       example: true as const,
     },
     {
@@ -266,19 +274,41 @@ export const site = {
       title: "Přistavení kontejneru 4,5 m (~5 m³)",
       amountExVat: 2400,
       unit: "",
-      from: true,
-      note: "plato / suťový, dle vzdálenosti",
+      note: "1–3 dny stání; jen přistavení, bez odvozu a likvidace",
+      example: true as const,
+    },
+    {
+      id: "kontejner-7d",
+      title: "Kontejner 4–7 dní stání",
+      amountExVat: 3200,
+      unit: "",
+      note: "jen přistavení, bez odvozu a likvidace",
+      example: true as const,
+    },
+    {
+      id: "kontejner-14d",
+      title: "Kontejner 8–14 dní stání",
+      amountExVat: 4500,
+      unit: "",
+      note: "jen přistavení, bez odvozu a likvidace",
       example: true as const,
     },
     {
       id: "sut-odvoz",
       title: "Odvoz a likvidace suti / zeminy",
-      amountExVat: null,
+      amountExVat: 2000,
       unit: "",
-      customLabel: "dle množství",
-      note: "cena podle druhu a množství",
+      from: true,
+      note: "k přistavení; přesná cena dle druhu a množství",
+      example: true as const,
     },
   ],
+  /** Stupně stání kontejneru (max. dny → cena bez DPH). */
+  containerStandingTiers: [
+    { maxDays: 3, amountExVat: 2400 },
+    { maxDays: 7, amountExVat: 3200 },
+    { maxDays: 14, amountExVat: 4500 },
+  ] as const,
   pricingDisclaimer:
     "Ceny jsou orientační, bez DPH. Přesnou cenu potvrdíme předem v odpovědi na poptávku.",
   towns: {
@@ -387,11 +417,11 @@ export const site = {
     },
     {
       q: "Kolik to stojí a jak se počítá doprava?",
-      a: "Orientačně 1200 Kč/h bez DPH (min. 4 h), doprava 42 Kč/km. Přesnou cenu řekneme předem.",
+      a: "Orientačně 1200 Kč/h bez DPH (min. 4 h) – do hodin patří i naložení, přeprava a vyložení. Doprava auta 42 Kč/km tam i zpět. Prostoj (čekání na stavbě) 700 Kč/h. Přesnou cenu řekneme předem.",
     },
     {
       q: "Co s vykopanou zeminou a sutí?",
-      a: "Přistavíme kontejner 4,5 m (~5 m³) a odvezeme na nejbližší recyklační skládku; cena podle množství.",
+      a: "Přistavíme kontejner 4,5 m (~5 m³): 1–3 dny 2400 Kč, do 7 dnů 3200 Kč, do 14 dnů 4500 Kč (jen stání). Odvoz a likvidace zvlášť – orientačně od 2000 Kč dle množství.",
     },
     {
       q: "Potřebuji povolení na kontejner?",

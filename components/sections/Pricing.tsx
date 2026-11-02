@@ -10,11 +10,13 @@ import { CountUp } from "@/components/ui/CountUp";
 import { YellowRange } from "@/components/ui/YellowRange";
 import {
   type ContainerMode,
+  containerStandingPrice,
   quoteRates,
   useQuote,
 } from "@/components/quote/QuoteContext";
 
 const KM_MAX = 60;
+const IDLE_MAX = 8;
 
 const CONTAINER_OPTIONS: ReadonlyArray<{
   value: ContainerMode;
@@ -27,9 +29,14 @@ const CONTAINER_OPTIONS: ReadonlyArray<{
 
 export function Pricing() {
   const hoursId = useId();
+  const idleId = useId();
   const kmId = useId();
+  const daysId = useId();
+  const liquidationId = useId();
   const { draft, setDraft, estimate, applyToContact } = useQuote();
   const townHint = landmarkForKm(estimate.kmOneWay);
+  const hasContainer = draft.containerMode !== "none";
+  const standingPrice = containerStandingPrice(draft.containerDays);
 
   function continueToContact() {
     applyToContact();
@@ -48,7 +55,7 @@ export function Pricing() {
           <div className="border-b border-line pb-8">
             <label
               htmlFor={hoursId}
-              className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45"
+              className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60"
             >
               Hodiny práce
             </label>
@@ -64,14 +71,36 @@ export function Pricing() {
             />
             <p className="mt-2 font-mono text-[11px] text-white/60">
               Minimum {quoteRates.minHours} h · {formatCzk(quoteRates.hourly)}/h
-              bez DPH
+              bez DPH · včetně naložení, přepravy a vyložení
+            </p>
+          </div>
+
+          <div className="border-b border-line pb-8">
+            <label
+              htmlFor={idleId}
+              className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60"
+            >
+              Prostoje (čekání na stavbě)
+            </label>
+            <YellowRange
+              id={idleId}
+              min={0}
+              max={IDLE_MAX}
+              step={1}
+              value={Math.min(IDLE_MAX, draft.idleHours)}
+              onChange={(idleHours) => setDraft({ idleHours })}
+              thumbLabel={`${estimate.idleHours} h`}
+              aria-valuetext={`${estimate.idleHours} hodin prostojů`}
+            />
+            <p className="mt-2 font-mono text-[11px] text-white/60">
+              {formatCzk(quoteRates.idleRate)}/h bez DPH · bagr stojí a čeká
             </p>
           </div>
 
           <div className="border-b border-line pb-8">
             <label
               htmlFor={kmId}
-              className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45"
+              className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60"
             >
               Vzdálenost (km jedním směrem)
             </label>
@@ -101,8 +130,8 @@ export function Pricing() {
             </p>
           </div>
 
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
+          <div className={hasContainer ? "border-b border-line pb-8" : undefined}>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
               Kontejner 4,5&nbsp;m (~5&nbsp;m³)
             </p>
             <div
@@ -130,11 +159,76 @@ export function Pricing() {
                 );
               })}
             </div>
-            <p className="mt-3 text-sm text-white/50">
-              od {formatCzk(quoteRates.containerFrom)} · přistavení k zakázce.
-              Odvoz a likvidace dle množství (není v odhadu).
-            </p>
           </div>
+
+          {hasContainer ? (
+            <>
+              <div className="border-b border-line pb-8">
+                <label
+                  htmlFor={daysId}
+                  className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60"
+                >
+                  Dny stání kontejneru
+                </label>
+                <YellowRange
+                  id={daysId}
+                  min={1}
+                  max={quoteRates.containerDaysMax}
+                  step={1}
+                  value={Math.min(
+                    quoteRates.containerDaysMax,
+                    draft.containerDays,
+                  )}
+                  onChange={(containerDays) => setDraft({ containerDays })}
+                  thumbLabel={`${estimate.containerDays} d`}
+                  aria-valuetext={`${estimate.containerDays} dní stání`}
+                />
+                <p className="mt-2 font-mono text-[11px] text-white/60">
+                  {site.containerStandingTiers.map((tier, i) => (
+                    <span key={tier.maxDays}>
+                      {i > 0 ? " · " : null}
+                      {i === 0
+                        ? `1–${tier.maxDays} dny`
+                        : `do ${tier.maxDays} dnů`}{" "}
+                      {formatCzk(tier.amountExVat)}
+                    </span>
+                  ))}{" "}
+                  · teď {formatCzk(standingPrice)}
+                </p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor={liquidationId}
+                  className="flex cursor-pointer items-start gap-3"
+                >
+                  <input
+                    id={liquidationId}
+                    type="checkbox"
+                    checked={draft.liquidation}
+                    onChange={(e) =>
+                      setDraft({ liquidation: e.target.checked })
+                    }
+                    className="mt-1 size-4 shrink-0 accent-komatsu-yellow"
+                  />
+                  <span>
+                    <span className="block text-sm text-white/85">
+                      Chci i odvoz a likvidaci
+                    </span>
+                    <span className="mt-1 block font-mono text-[11px] text-white/60">
+                      od {formatCzk(quoteRates.liquidationFrom)} · přesná cena
+                      dle druhu a množství (není závazná)
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-white/60">
+              Bez kontejneru. Odvoz a likvidace materiálu řešíme zvlášť v
+              poptávce.
+            </p>
+          )}
         </fieldset>
 
         <aside
@@ -142,7 +236,7 @@ export function Pricing() {
           aria-live="polite"
           aria-atomic="true"
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
             Orientační součet
           </p>
 
@@ -168,13 +262,13 @@ export function Pricing() {
           </ul>
 
           <div className="mt-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
               Celkem bez DPH
             </p>
             <p className="mt-2 font-display text-4xl uppercase tracking-tight text-white md:text-5xl">
               <CountUp value={estimate.totalEx} />
             </p>
-            <p className="mt-2 text-sm text-white/55">
+            <p className="mt-2 text-sm text-white/60">
               <CountUp value={estimate.totalInc} /> s DPH (
               {Math.round(site.vatRate * 100)} %)
             </p>

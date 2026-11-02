@@ -12,21 +12,29 @@ import { formatCzk, site, withVat } from "@/content/site";
 
 const HOURLY =
   site.pricing.find((p) => p.id === "bagr-hodina")?.amountExVat ?? 1200;
+const IDLE_RATE =
+  site.pricing.find((p) => p.id === "prostoj")?.amountExVat ?? 700;
 const MIN_JOB =
   site.pricing.find((p) => p.id === "minimum")?.amountExVat ?? 4800;
 const KM_RATE =
   site.pricing.find((p) => p.id === "doprava")?.amountExVat ?? 42;
-const CONTAINER_FROM =
-  site.pricing.find((p) => p.id === "kontejner")?.amountExVat ?? 2400;
+const LIQUIDATION_FROM =
+  site.pricing.find((p) => p.id === "sut-odvoz")?.amountExVat ?? 2000;
 
 export const MIN_HOURS = Math.max(1, Math.round(MIN_JOB / HOURLY));
+export const CONTAINER_DAYS_MAX =
+  site.containerStandingTiers[site.containerStandingTiers.length - 1]
+    ?.maxDays ?? 14;
 
 export type ContainerMode = "none" | "plato" | "sutovy";
 
 export type QuoteInput = {
   hours: number;
+  idleHours: number;
   kmOneWay: number;
   containerMode: ContainerMode;
+  containerDays: number;
+  liquidation: boolean;
 };
 
 export type QuoteLine = {
@@ -60,10 +68,34 @@ const CONTAINER_LABELS: Record<Exclude<ContainerMode, "none">, string> = {
   sutovy: "Suťový kontejner 4,5 m (~5 m³)",
 };
 
+export function containerStandingPrice(days: number): number {
+  const clamped = Math.max(1, Math.min(CONTAINER_DAYS_MAX, days));
+  for (const tier of site.containerStandingTiers) {
+    if (clamped <= tier.maxDays) return tier.amountExVat;
+  }
+  return (
+    site.containerStandingTiers[site.containerStandingTiers.length - 1]
+      ?.amountExVat ?? 4500
+  );
+}
+
+function standingTierLabel(days: number): string {
+  const clamped = Math.max(1, Math.min(CONTAINER_DAYS_MAX, days));
+  if (clamped <= 3) return "1–3 dny stání";
+  if (clamped <= 7) return "4–7 dní stání";
+  return "8–14 dní stání";
+}
+
 export function buildEstimate(input: QuoteInput): QuoteEstimate {
   const hours = Math.max(MIN_HOURS, input.hours);
+  const idleHours = Math.max(0, input.idleHours);
   const kmOneWay = Math.max(0, input.kmOneWay);
+  const containerDays = Math.max(
+    1,
+    Math.min(CONTAINER_DAYS_MAX, input.containerDays),
+  );
   const machine = Math.max(MIN_JOB, hours * HOURLY);
+  const idle = idleHours * IDLE_RATE;
   const transport = kmOneWay * 2 * KM_RATE;
   const lines: QuoteLine[] = [
     {
@@ -71,23 +103,40 @@ export function buildEstimate(input: QuoteInput): QuoteEstimate {
       label: "Minibagr s obsluhou",
       detail: `${hours} h × ${formatCzk(HOURLY)}/h${
         hours * HOURLY < MIN_JOB ? ` · min. ${formatCzk(MIN_JOB)}` : ""
-      }`,
+      } · vč. naložení/přepravy/vyložení`,
       amount: machine,
     },
-    {
-      id: "transport",
-      label: "Doprava",
-      detail: `${kmOneWay} km × 2 × ${formatCzk(KM_RATE)}/km`,
-      amount: transport,
-    },
   ];
+  if (idleHours > 0) {
+    lines.push({
+      id: "idle",
+      label: "Prostoj bagru",
+      detail: `${idleHours} h × ${formatCzk(IDLE_RATE)}/h`,
+      amount: idle,
+    });
+  }
+  lines.push({
+    id: "transport",
+    label: "Doprava",
+    detail: `${kmOneWay} km × 2 × ${formatCzk(KM_RATE)}/km`,
+    amount: transport,
+  });
   if (input.containerMode !== "none") {
+    const standing = containerStandingPrice(containerDays);
     lines.push({
       id: "container",
       label: CONTAINER_LABELS[input.containerMode],
-      detail: "od · dle vzdálenosti",
-      amount: CONTAINER_FROM,
+      detail: `${containerDays} ${containerDays === 1 ? "den" : "dní"} · ${standingTierLabel(containerDays)} · jen přistavení`,
+      amount: standing,
     });
+    if (input.liquidation) {
+      lines.push({
+        id: "liquidation",
+        label: "Odvoz a likvidace",
+        detail: "od · dle druhu a množství",
+        amount: LIQUIDATION_FROM,
+      });
+    }
   }
   const totalEx = lines.reduce((sum, l) => sum + l.amount, 0);
   const totalInc = withVat(totalEx);
@@ -102,8 +151,11 @@ export function buildEstimate(input: QuoteInput): QuoteEstimate {
 
   return {
     hours,
+    idleHours,
     kmOneWay,
     containerMode: input.containerMode,
+    containerDays,
+    liquidation: input.liquidation,
     lines,
     totalEx,
     totalInc,
@@ -114,8 +166,11 @@ export function buildEstimate(input: QuoteInput): QuoteEstimate {
 export function QuoteProvider({ children }: { children: ReactNode }) {
   const [draft, setDraftState] = useState<QuoteInput>({
     hours: MIN_HOURS,
+    idleHours: 0,
     kmOneWay: 13, // Domažlice — výchozí vzdálenost v ceníku
     containerMode: "none",
+    containerDays: 3,
+    liquidation: false,
   });
   const [applied, setApplied] = useState<QuoteEstimate | null>(null);
 
@@ -158,8 +213,10 @@ export function useQuote(): QuoteContextValue {
 
 export const quoteRates = {
   hourly: HOURLY,
+  idleRate: IDLE_RATE,
   minJob: MIN_JOB,
   kmRate: KM_RATE,
-  containerFrom: CONTAINER_FROM,
+  liquidationFrom: LIQUIDATION_FROM,
   minHours: MIN_HOURS,
+  containerDaysMax: CONTAINER_DAYS_MAX,
 } as const;
