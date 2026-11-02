@@ -27,10 +27,10 @@ export function Header() {
           : "border-transparent bg-transparent backdrop-blur-none"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4 md:px-8">
         <Link
           href="#hero"
-          className="flex min-w-0 items-center"
+          className="flex shrink-0 items-center"
           aria-label={`${siteConfig.name} – úvod`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- brand SVG */}
@@ -38,7 +38,7 @@ export function Header() {
             src="/brand/zemtar-logo.svg"
             alt={siteConfig.name}
             height={24}
-            className="h-5 w-auto drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)] sm:h-6"
+            className="h-4 w-auto drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)] sm:h-6"
           />
         </Link>
 
@@ -54,7 +54,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
           <a
             href={unwrap(site.phoneHref)}
             className="hidden text-sm font-medium text-white md:inline"
@@ -64,7 +64,7 @@ export function Header() {
           </a>
           <Button
             href="#kontakt"
-            className="!px-3 !py-2 text-xs md:!px-4"
+            className="!px-2.5 !py-2 text-xs whitespace-nowrap sm:!px-3 md:!px-4"
             onClick={() => track("cta_click", { source: "header" })}
           >
             {site.hero.cta}

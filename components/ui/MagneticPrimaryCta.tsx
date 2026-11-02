@@ -108,7 +108,7 @@ export function MagneticPrimaryCta({
       onMouseMove={onMove}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      className={`relative inline-flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-none bg-komatsu-yellow px-5 py-3 font-display text-sm uppercase tracking-wide text-void will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-komatsu-yellow ${className}`}
+      className={`relative inline-flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-none border border-transparent bg-komatsu-yellow px-5 py-3 font-display text-sm uppercase tracking-wide text-void will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-komatsu-yellow ${className}`}
     >
       <span
         ref={fillRef}

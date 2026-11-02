@@ -193,10 +193,11 @@ function HeroCopy() {
       </p>
       <div
         data-hero="cta"
-        className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 pointer-events-auto sm:mt-7"
+        className="relative z-10 mt-6 flex flex-nowrap items-center justify-center gap-1.5 pointer-events-auto sm:mt-7 sm:gap-3"
       >
         <MagneticPrimaryCta
           href="#kontakt"
+          className="!px-2.5 !py-3 !text-xs whitespace-nowrap sm:!px-5 sm:!text-sm"
           onClick={() => track("cta_click", { source: "hero" })}
         >
           {site.hero.cta}
@@ -204,7 +205,7 @@ function HeroCopy() {
         <Button
           href={unwrap(site.phoneHref)}
           variant="outline"
-          className="border-white/55 bg-black/45 backdrop-blur-sm hover:border-white hover:bg-black/60"
+          className="!px-2.5 !py-3 !text-xs whitespace-nowrap border-white/55 bg-black/45 backdrop-blur-sm hover:border-white hover:bg-black/60 sm:!px-5 sm:!text-sm"
           onClick={() => track("phone_click", { source: "hero" })}
         >
           {site.hero.secondary}
