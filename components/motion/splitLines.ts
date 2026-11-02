@@ -45,6 +45,9 @@ export function splitElementIntoLines(el: HTMLElement): HTMLElement[] {
     const mask = document.createElement("span");
     mask.style.display = "block";
     mask.style.overflow = "hidden";
+    // Room for Czech diacritics (ů, ř, …) clipped by overflow + tight leading.
+    mask.style.paddingTop = "0.18em";
+    mask.style.marginTop = "-0.18em";
 
     const inner = document.createElement("span");
     inner.style.display = "block";

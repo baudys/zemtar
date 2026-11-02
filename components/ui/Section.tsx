@@ -115,7 +115,7 @@ export function SectionHeader({
       ) : null}
       <h2
         ref={titleRef}
-        className="mt-4 font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl"
+        className="mt-4 font-display text-4xl uppercase leading-[1.15] tracking-tight text-white md:text-6xl lg:text-7xl"
       >
         {title}
       </h2>
