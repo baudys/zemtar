@@ -233,7 +233,7 @@ export function AreaLeaflet() {
             radius: isOrigin ? 7 : isBold ? 5 : 4,
             color: isOrigin ? "#ffffff" : "#f5b800",
             weight: isOrigin ? 2 : 1,
-            fillColor: isOrigin ? "#e1011b" : "#f5b800",
+            fillColor: "#f5b800",
             fillOpacity: 1,
           }).addTo(map);
 

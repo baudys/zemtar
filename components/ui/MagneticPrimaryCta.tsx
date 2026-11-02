@@ -108,11 +108,11 @@ export function MagneticPrimaryCta({
       onMouseMove={onMove}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      className={`relative inline-flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-none bg-brand-red px-5 py-3 font-display text-sm uppercase tracking-wide text-white will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-komatsu-yellow ${className}`}
+      className={`relative inline-flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-none bg-komatsu-yellow px-5 py-3 font-display text-sm uppercase tracking-wide text-void will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-komatsu-yellow ${className}`}
     >
       <span
         ref={fillRef}
-        className="pointer-events-none absolute inset-0 bg-[#c40017]"
+        className="pointer-events-none absolute inset-0 bg-[#c49400]"
         style={{ clipPath: "inset(100% 0 0 0)" }}
         aria-hidden
       />

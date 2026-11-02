@@ -9,9 +9,13 @@ export function Footer() {
     <footer className="mt-10 border-t-2 border-komatsu-yellow bg-void pt-20 pb-16 md:mt-14 md:pt-24 md:pb-20">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-12 md:gap-10 md:px-8">
         <div className="md:col-span-4">
-          <p className="font-display text-xl uppercase leading-tight tracking-wide text-white">
-            <Placeholder value={site.name} />
-          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element -- brand SVG */}
+          <img
+            src="/brand/zemtar-logo.svg"
+            alt={siteConfig.name}
+            height={28}
+            className="h-6 w-auto md:h-7"
+          />
           <p className="mt-3 text-sm leading-relaxed text-white/70">{siteConfig.tagline}</p>
           <p className="mt-5 text-sm leading-relaxed text-white/70">
             Provozovatel: {siteConfig.billing.company}, IČO {siteConfig.billing.ico}, DIČ{" "}

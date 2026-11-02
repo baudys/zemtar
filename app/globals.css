@@ -2,18 +2,24 @@
 
 :root {
   color-scheme: dark;
-  --brand-red: #e1011b;
-  --komatsu-yellow: #f5b800;
-  --ink: #070809;
-  --void: #070809;
-  --panel: #0e1013;
-  --deep: #12151a;
-  --paper: #eceae4;
+  /* ZEMTAR paleta (05_Barvy_a_pisma) */
+  --zemtar-yellow: #f5b800;
+  --zemtar-asphalt: #1d1b18;
+  --zemtar-sand: #f4f1ea;
+  /* Alias + sémantika UI */
+  --komatsu-yellow: var(--zemtar-yellow);
+  --danger: #e1011b;
+  --brand-red: var(--danger);
+  --ink: var(--zemtar-asphalt);
+  --void: var(--zemtar-asphalt);
+  --panel: #141210;
+  --deep: #1a1815;
+  --paper: var(--zemtar-sand);
   --soil: #3d342c;
   --sand: #a89a84;
   --line: rgba(255, 255, 255, 0.12);
   --overlay: rgba(0, 0, 0, 0.55);
-  --focus: #f5b800;
+  --focus: var(--zemtar-yellow);
 }
 
 /*
@@ -34,7 +40,11 @@ select optgroup {
 
 @theme inline {
   --color-brand-red: var(--brand-red);
+  --color-danger: var(--danger);
   --color-komatsu-yellow: var(--komatsu-yellow);
+  --color-zemtar-yellow: var(--zemtar-yellow);
+  --color-zemtar-asphalt: var(--zemtar-asphalt);
+  --color-zemtar-sand: var(--zemtar-sand);
   --color-ink: var(--ink);
   --color-void: var(--void);
   --color-panel: var(--panel);
@@ -86,7 +96,7 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--brand-red) 70%, black);
+  background: color-mix(in srgb, var(--zemtar-yellow) 75%, black);
   color: white;
 }
 
@@ -166,6 +176,21 @@ body {
 }
 .field-focus-line:focus-within::after {
   transform: scaleX(1);
+}
+
+@keyframes fleet-loadout-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fleet-loadout-in {
+  animation: fleet-loadout-in 380ms ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {

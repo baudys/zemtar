@@ -364,7 +364,7 @@ export function Contact() {
               <dd>
                 <a
                   href={phoneHref}
-                  className="text-white hover:text-brand-red"
+                  className="text-white hover:text-komatsu-yellow"
                   onClick={() => track("phone_click", { source: "contact" })}
                 >
                   <Placeholder value={site.phone} />
@@ -378,7 +378,7 @@ export function Contact() {
               <dd>
                 <a
                   href={`mailto:${unwrap(site.email)}`}
-                  className="hover:text-brand-red"
+                  className="hover:text-komatsu-yellow"
                 >
                   <Placeholder value={site.email} />
                 </a>

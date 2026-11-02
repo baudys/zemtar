@@ -28,10 +28,18 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-8">
-        <Link href="#hero" className="flex min-w-0 items-center" aria-label={siteConfig.name}>
-          <span className="max-w-[9.5rem] font-display text-[0.7rem] uppercase leading-[1.05] tracking-wide text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)] sm:max-w-none sm:text-sm">
-            <Placeholder value={site.name} />
-          </span>
+        <Link
+          href="#hero"
+          className="flex min-w-0 items-center"
+          aria-label={`${siteConfig.name} – úvod`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- brand SVG */}
+          <img
+            src="/brand/zemtar-logo.svg"
+            alt={siteConfig.name}
+            height={24}
+            className="h-5 w-auto drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)] sm:h-6"
+          />
         </Link>
 
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Hlavní navigace">

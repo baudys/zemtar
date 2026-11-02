@@ -42,6 +42,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: origin,
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png" }],
+  },
+  manifest: "/site.webmanifest",
+  other: {
+    "theme-color": "#1D1B18",
+  },
   openGraph: {
     title: site.meta.title,
     description: site.meta.description,
@@ -50,11 +63,17 @@ export const metadata: Metadata = {
     url: origin,
     images: [
       {
-        url: "/opengraph-image",
+        url: "/og-image-1200x630.png",
         width: 1200,
         height: 630,
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: site.meta.title,
+    description: site.meta.description,
+    images: ["/og-image-1200x630.png"],
   },
 };
 

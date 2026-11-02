@@ -8,7 +8,7 @@ import type {
 type Variant = "primary" | "ghost" | "outline";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-brand-red text-white hover:bg-[#c40017]",
+  primary: "bg-komatsu-yellow text-void hover:bg-[#e0a800]",
   ghost: "bg-transparent text-white hover:bg-white/10",
   outline:
     "border border-line text-white hover:border-white/40 hover:bg-white/5",

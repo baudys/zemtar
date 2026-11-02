@@ -1,0 +1,20 @@
+{
+  "name": "ZEMTAR",
+  "short_name": "ZEMTAR",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#1D1B18",
+  "background_color": "#1D1B18",
+  "display": "standalone"
+}

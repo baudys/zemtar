@@ -11,7 +11,7 @@ export function localBusinessJsonLd() {
     url: origin,
     telephone: siteConfig.phone,
     email: siteConfig.email,
-    image: `${origin}/opengraph-image`,
+    image: `${origin}/og-image-1200x630.png`,
     address: {
       "@type": "PostalAddress",
       // Provozovna v Poběžovicích; sídlo (Zbuzany) je jen v patičce a zásadách.

@@ -1,6 +1,6 @@
 /**
  * Jediný zdroj pravdy pro texty a kontakty.
- * Veřejný název, doména a kontakty: `siteConfig`.
+ * Veřejný název, doména a kontakty: `siteConfig` (značka ZEMTAR).
  * G.T.S. smí být jen v `siteConfig.billing` (fakturace).
  * Hodnoty s example: true jsou UKÁZKOVÁ DATA – nahradit před spuštěním (BRIEF kap. 8–9).
  */
@@ -25,14 +25,14 @@ export type SiteConfig = {
   billing: SiteBilling;
 };
 
-/** Jediná nezadaná veřejná doména. `url` se z ní skládá. */
-const domain = "{{DOMENA}}";
+/** Veřejná doména značky. `url` se z ní skládá. */
+const domain = "zemtar.cz";
 
 /** Ověřený telefon z původního `site` – `phoneTel` se skládá z něj. */
 const phone = "+420 724 518 782";
 
 export const siteConfig: SiteConfig = {
-  name: "Zemní práce Domažlicko",
+  name: "ZEMTAR",
   domain,
   url: `https://${domain}`,
   email: "svec@gts-pce.cz",
@@ -87,7 +87,7 @@ export function collectExamplePaths(
 
 export const site = {
   name: siteConfig.name,
-  domain: ex(siteConfig.domain),
+  domain: siteConfig.domain,
   /** Právnická osoba – jen fakturace, ne značka webu. */
   operator: siteConfig.billing.company,
   ico: siteConfig.billing.ico,
@@ -463,7 +463,7 @@ export const site = {
   /** Max. velikost jedné fotky v poptávce (MB). */
   inquiryPhotoMaxMb: 5,
   meta: {
-    title: `${siteConfig.tagline} | ${siteConfig.name}`,
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: `Kompletní zemní práce od A do Z – výkopy, terénní úpravy, přípojky, odvoz suti a kontejnerová doprava. ${siteConfig.serviceArea}`,
   },
 } as const;
