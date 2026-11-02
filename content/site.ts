@@ -440,13 +440,28 @@ export const site = {
       a: "Převodem na fakturu po dokončení.",
     },
   ],
+  /** Možnosti multi-selectu v poptávce; `value` = slug pro `?sluzba=`. */
   inquiryTypes: [
     { value: "vykop", label: "Výkop" },
+    { value: "vrtani-der", label: "Vrtání děr na sloupky" },
+    { value: "odvoz-suti", label: "Odvoz suti + kontejner" },
     { value: "teren", label: "Terénní úpravy" },
-    { value: "preprava", label: "Přeprava" },
-    { value: "sut", label: "Kontejnery / odvoz suti" },
+    { value: "pripojky", label: "Přípojky" },
+    { value: "odvodneni", label: "Odvodnění" },
+    { value: "katrovani", label: "Kátrování zeminy" },
+    { value: "kontejnerova-doprava", label: "Kontejnerová doprava" },
+    { value: "doprava-stroju", label: "Doprava / přeprava strojů" },
+    { value: "plosina-navijak", label: "Plošina s navijákem / odtah" },
     { value: "jine", label: "Jiné" },
   ],
+  /** Alias starých / sekčních id → slug poptávky (`?sluzba=`). */
+  inquiryServiceAliases: {
+    vykopy: "vykop",
+    preprava: "doprava-stroju",
+    sut: "odvoz-suti",
+  } as const,
+  /** Max. velikost jedné fotky v poptávce (MB). */
+  inquiryPhotoMaxMb: 5,
   meta: {
     title: `${siteConfig.tagline} | ${siteConfig.name}`,
     description: `Kompletní zemní práce od A do Z – výkopy, terénní úpravy, přípojky, odvoz suti a kontejnerová doprava. ${siteConfig.serviceArea}`,

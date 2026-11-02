@@ -1,17 +1,41 @@
 "use server";
 
 import { z } from "zod";
-import { siteConfig } from "@/content/site";
+import { site, siteConfig, unwrap } from "@/content/site";
 
 const phonePattern = /^[0-9 +()\-]{9,}$/;
+const INQUIRY_PHOTO_MAX_MB = site.inquiryPhotoMaxMb;
+const INQUIRY_PHOTO_MAX_BYTES = INQUIRY_PHOTO_MAX_MB * 1024 * 1024;
+const INQUIRY_PHOTO_MAX_COUNT = 4;
+/** Rezerva pod limitem těla Vercel Functions (~4,5 MB). */
+const INQUIRY_PHOTOS_TOTAL_MAX_BYTES = 3.5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/heic",
+  "image/heif",
+]);
+
+const serviceValues = site.inquiryTypes.map((t) => t.value) as [
+  (typeof site.inquiryTypes)[number]["value"],
+  ...(typeof site.inquiryTypes)[number]["value"][],
+];
+
+const serviceLabelByValue = Object.fromEntries(
+  site.inquiryTypes.map((t) => [t.value, t.label]),
+) as Record<string, string>;
 
 function countPhoneDigits(value: string): number {
   return value.replace(/\D/g, "").length;
 }
 
 const inquirySchema = z.object({
-  type: z.enum(["vykop", "teren", "preprava", "sut", "jine"]),
-  place: z.string().trim().min(2, "Zadejte obec / místo"),
+  services: z
+    .array(z.enum(serviceValues))
+    .min(1, "Vyberte alespoň jednu službu"),
+  place: z.string().trim().min(2, "Zadejte obec nebo adresu zakázky"),
   term: z.string().trim().optional(),
   name: z.string().trim().min(2, "Zadejte jméno"),
   phone: z
@@ -21,15 +45,21 @@ const inquirySchema = z.object({
     .refine((v) => countPhoneDigits(v) >= 9, {
       message: "Zadejte platné telefonní číslo (min. 9 číslic)",
     }),
-  email: z.union([z.string().trim().email("Zadejte platný e-mail"), z.literal("")]),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Zadejte e-mail")
+    .email("Zadejte platný e-mail"),
   note: z.string().trim().optional(),
-  consent: z.literal("on"),
+  consent: z.literal("on", {
+    error: "Potvrďte souhlas se zpracováním osobních údajů",
+  }),
   website: z.string().optional(), // honeypot
   startedAt: z.string(),
 });
 
 export type InquiryValues = {
-  type: string;
+  services: string[];
   place: string;
   term: string;
   name: string;
@@ -48,9 +78,24 @@ export type InquiryState = {
   values?: InquiryValues;
 };
 
+type PhotoAttachment = {
+  filename: string;
+  contentType: string;
+  size: number;
+  contentBase64: string;
+};
+
+function collectServices(formData: FormData): string[] {
+  const raw = formData
+    .getAll("services")
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+  return [...new Set(raw)];
+}
+
 function valuesFromForm(formData: FormData): InquiryValues {
   return {
-    type: String(formData.get("type") ?? "vykop"),
+    services: collectServices(formData),
     place: String(formData.get("place") ?? ""),
     term: String(formData.get("term") ?? ""),
     name: String(formData.get("name") ?? ""),
@@ -61,13 +106,155 @@ function valuesFromForm(formData: FormData): InquiryValues {
   };
 }
 
+function isImageFile(file: File): boolean {
+  if (ALLOWED_IMAGE_TYPES.has(file.type)) return true;
+  // některé prohlížeče nepošlou MIME u HEIC
+  return /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(file.name);
+}
+
+async function parsePhotos(
+  formData: FormData,
+): Promise<{ photos: PhotoAttachment[]; error?: string }> {
+  const entries = formData
+    .getAll("photos")
+    .filter((v): v is File => v instanceof File && v.size > 0);
+
+  if (entries.length === 0) return { photos: [] };
+
+  if (entries.length > INQUIRY_PHOTO_MAX_COUNT) {
+    return {
+      photos: [],
+      error: `Nahrajte nejvýše ${INQUIRY_PHOTO_MAX_COUNT} fotografie.`,
+    };
+  }
+
+  let total = 0;
+  const photos: PhotoAttachment[] = [];
+
+  for (const file of entries) {
+    if (!isImageFile(file)) {
+      return {
+        photos: [],
+        error: `Soubor „${file.name}“ není obrázek (JPEG, PNG, WebP, GIF).`,
+      };
+    }
+    if (file.size > INQUIRY_PHOTO_MAX_BYTES) {
+      return {
+        photos: [],
+        error: `Fotka „${file.name}“ překračuje limit ${INQUIRY_PHOTO_MAX_MB} MB.`,
+      };
+    }
+    total += file.size;
+    if (total > INQUIRY_PHOTOS_TOTAL_MAX_BYTES) {
+      return {
+        photos: [],
+        error:
+          "Celková velikost fotek je příliš velká. Nahrajte méně nebo menší soubory.",
+      };
+    }
+    const buf = Buffer.from(await file.arrayBuffer());
+    photos.push({
+      filename: file.name || "fotka.jpg",
+      contentType: file.type || "application/octet-stream",
+      size: file.size,
+      contentBase64: buf.toString("base64"),
+    });
+  }
+
+  return { photos };
+}
+
+function buildPlainBody(
+  data: z.infer<typeof inquirySchema>,
+  photoNames: string[],
+): string {
+  const serviceLabels = data.services
+    .map((s) => serviceLabelByValue[s] ?? s)
+    .join(", ");
+
+  return [
+    `Služby: ${serviceLabels}`,
+    `Místo: ${data.place}`,
+    `Termín: ${data.term || "—"}`,
+    `Jméno: ${data.name}`,
+    `Telefon: ${data.phone}`,
+    `E-mail: ${data.email}`,
+    "",
+    data.note || "",
+    "",
+    photoNames.length
+      ? `Fotky: ${photoNames.join(", ")}`
+      : "Fotky: —",
+  ].join("\n");
+}
+
+async function sendViaResend(opts: {
+  to: string;
+  subject: string;
+  text: string;
+  photos: PhotoAttachment[];
+}): Promise<{ ok: true } | { ok: false; message: string }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return { ok: false, message: "Chybí konfigurace odesílání e-mailu." };
+  }
+
+  const from =
+    process.env.INQUIRY_FROM ||
+    `poptavka@${siteConfig.domain.includes("{{") ? "resend.dev" : siteConfig.domain}`;
+
+  const payload: Record<string, unknown> = {
+    from,
+    to: [opts.to],
+    subject: opts.subject,
+    text: opts.text,
+  };
+
+  if (opts.photos.length > 0) {
+    payload.attachments = opts.photos.map((p) => ({
+      filename: p.filename,
+      content: p.contentBase64,
+      content_type: p.contentType,
+    }));
+  }
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      console.error("[inquiry resend]", res.status, detail);
+      return {
+        ok: false,
+        message:
+          "Odeslání e-mailu se nepodařilo. Zkuste to znovu nebo nám zavolejte.",
+      };
+    }
+    return { ok: true };
+  } catch (err) {
+    console.error("[inquiry resend]", err);
+    return {
+      ok: false,
+      message:
+        "Odeslání e-mailu se nepodařilo. Zkuste to znovu nebo nám zavolejte.",
+    };
+  }
+}
+
 export async function submitInquiry(
   _prev: InquiryState,
   formData: FormData,
 ): Promise<InquiryState> {
   const values = valuesFromForm(formData);
   const raw = {
-    type: values.type,
+    services: values.services,
     place: values.place,
     term: values.term,
     name: values.name,
@@ -102,51 +289,85 @@ export async function submitInquiry(
     return {
       ok: false,
       message: "Zkontrolujte prosím vyplněná pole.",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: parsed.error.flatten().fieldErrors as Record<
+        string,
+        string[]
+      >,
+      values,
+    };
+  }
+
+  const photoResult = await parsePhotos(formData);
+  if (photoResult.error) {
+    return {
+      ok: false,
+      message: photoResult.error,
+      fieldErrors: { photos: [photoResult.error] },
       values,
     };
   }
 
   const data = parsed.data;
+  const photos = photoResult.photos;
+  const photoNames = photos.map((p) => p.filename);
+  const plainBody = buildPlainBody(data, photoNames);
 
-  // TODO: napojit Resend/SMTP (env RESEND_API_KEY, INQUIRY_TO)
+  // TODO: napojit Resend/SMTP (env RESEND_API_KEY, INQUIRY_TO) – přílohy = fotky
   console.log("[inquiry stub]", {
-    type: data.type,
+    services: data.services,
     place: data.place,
     term: data.term,
     name: data.name,
     phone: data.phone,
     email: data.email,
     note: data.note,
+    photos: photos.map((p) => ({
+      filename: p.filename,
+      contentType: p.contentType,
+      size: p.size,
+    })),
   });
 
-  const hasMailBackend = Boolean(process.env.RESEND_API_KEY && process.env.INQUIRY_TO);
+  const hasMailBackend = Boolean(
+    process.env.RESEND_API_KEY && process.env.INQUIRY_TO,
+  );
 
-  if (!hasMailBackend) {
-    const to = process.env.INQUIRY_TO || siteConfig.email;
-    const subject = encodeURIComponent(`Poptávka minibagr – ${data.place}`);
-    const body = encodeURIComponent(
-      [
-        `Typ: ${data.type}`,
-        `Místo: ${data.place}`,
-        `Termín: ${data.term || "—"}`,
-        `Jméno: ${data.name}`,
-        `Telefon: ${data.phone}`,
-        `E-mail: ${data.email || "—"}`,
-        "",
-        data.note || "",
-      ].join("\n"),
-    );
+  if (hasMailBackend) {
+    const sent = await sendViaResend({
+      to: process.env.INQUIRY_TO as string,
+      subject: `Poptávka – ${data.place}`,
+      text: plainBody,
+      photos,
+    });
+    if (!sent.ok) {
+      return { ok: false, message: sent.message, values };
+    }
     return {
       ok: true,
-      message:
-        "Děkujeme. Odesílání e-mailu zatím není napojené – můžete použít tlačítko mailto nebo zavolat.",
-      mailto: `mailto:${to}?subject=${subject}&body=${body}`,
+      message: `Děkujeme, ozveme se nejpozději do ${unwrap(site.responseSla)}.`,
     };
   }
 
+  const to = process.env.INQUIRY_TO || siteConfig.email;
+  const subject = encodeURIComponent(`Poptávka – ${data.place}`);
+  const body = encodeURIComponent(
+    [
+      plainBody,
+      "",
+      photos.length
+        ? `(Fotky nelze poslat přes mailto – po napojení Resend půjdou jako přílohy: ${photoNames.join(", ")})`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  );
+
   return {
     ok: true,
-    message: "Děkujeme, ozveme se nejpozději do 1 pracovního dne.",
+    message:
+      photos.length > 0
+        ? "Děkujeme. Odesílání e-mailu zatím není napojené – fotky jsou přijaté na serveru (dev log); přes mailto je nelze přiložit. Můžete použít tlačítko mailto nebo zavolat."
+        : "Děkujeme. Odesílání e-mailu zatím není napojené – můžete použít tlačítko mailto nebo zavolat.",
+    mailto: `mailto:${to}?subject=${subject}&body=${body}`,
   };
 }
