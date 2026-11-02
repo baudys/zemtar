@@ -113,8 +113,8 @@ export function buildFleetSelection(workId: WorkId): FleetSelection {
 const QuoteContext = createContext<QuoteContextValue | null>(null);
 
 const CONTAINER_LABELS: Record<Exclude<ContainerMode, "none">, string> = {
-  plato: "Plošinový kontejner 4,5 m (~5 m³)",
-  sutovy: "Suťový kontejner 4,5 m (~5 m³)",
+  plato: "Plošinový kontejner 4,5 m (cca 5 m³)",
+  sutovy: "Suťový kontejner 4,5 m (cca 5 m³)",
 };
 
 export function containerStandingPrice(days: number): number {

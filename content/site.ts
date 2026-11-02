@@ -164,7 +164,7 @@ export const site = {
         "Drenáže a odvodnění",
       ],
       image: "/photos/pc38mr-studio.webp",
-      imageAlt: "Minibagr Komatsu PC38MR-5",
+      imageAlt: "Minibagr Komatsu PC38MR",
     },
     {
       id: "preprava",
@@ -194,20 +194,21 @@ export const site = {
   servicesIntro:
     "Výkopy, terén, přeprava i kontejnery – každou techniku i zvlášť, podle toho, co potřebujete.",
   // Interní poznámky (nerenderovat na webu): studio stills Dreamina (28. 10. 2026);
-  // MAN – ověřit u Zbyňka současné naložení; kontejnery – délka 4,5 m / objem ~5 m³ dle BRIEF (ověřit u provozovatele).
+  // Orientační parametry (šířka/hloubka PC38MR, nosnost plošiny, objem/max. náklad kontejnerů) – doladit u provozovatele.
   fleet: [
     {
       id: "bagr",
-      title: "Komatsu PC38MR-5",
+      title: "Komatsu PC38MR",
       image: "/photos/pc38mr-studio.webp",
-      imageAlt: "Minibagr Komatsu PC38MR-5 ve studiu",
+      imageAlt: "Minibagr Komatsu PC38MR ve studiu",
       specs: [
-        { label: "Provozní hmotnost", value: 3.8, unit: "t", decimals: 1 },
+        { label: "Provozní hmotnost", value: "přibližně 3,7–4,0 t", unit: "" },
         { label: "Šířka", value: 1.74, unit: "m", decimals: 2 },
         { label: "Hloubka výkopu", value: 3.45, unit: "m", decimals: 2 },
-        { label: "Průjezd", value: "~1,8 m", unit: "" },
+        { label: "Záď", value: "zkrácený přesah", unit: "" },
       ],
-      blurb: "Krátká záď, gumové pásy – hodí se i ke zdi, plotu a do stísněných prostor.",
+      blurb:
+        "Kompaktní pásové minirypadlo – výkopy, terénní úpravy a práce ve stísněných prostorách.",
     },
     {
       id: "man",
@@ -216,24 +217,28 @@ export const site = {
       imageAlt: "Nákladní auto MAN TGL s plošinou a minibagrem",
       specs: [
         { label: "Celková hmotnost", value: 12, unit: "t", decimals: 0 },
-        { label: "Výkon", value: 220, unit: "k", decimals: 0 },
-        { label: "Nosnost plošiny", value: ex("[t – doplnit]"), unit: "" },
+        { label: "Výkon", value: "162 kW (220 k)", unit: "" },
+        { label: "Nápravy", value: "4×2", unit: "" },
+        { label: "Nástavba", value: "plošina MULTITEC", unit: "" },
+        { label: "Nosnost plošiny", value: "cca 5 t", unit: "" },
       ],
-      blurb: "Plošina s navijákem – stroje, auta i jiné náklady; po domluvě i odtah. Dá se použít samostatně.",
+      blurb:
+        "Přepravní plošina MULTITEC – stavební stroje, mechanismy a další technika. Dá se použít samostatně.",
     },
     {
       id: "kontejnery",
       title: "Kontejnery 4,5 m",
       image: "/photos/kontejnery-studio.webp",
-      imageAlt: "Kontejnery na suť – plato a suťový",
+      imageAlt: "Kontejnery – plato a suťový",
       specs: [
         { label: "Počet", value: 2, unit: "ks", decimals: 0 },
         { label: "Délka", value: 4.5, unit: "m", decimals: 1 },
-        { label: "Objem", value: "~5 m³", unit: "" },
-        { label: "Typy", value: "plato + suťový", unit: "" },
-        { label: "Max. náklad", value: ex("[t – doplnit]"), unit: "" },
+        { label: "Objem", value: "cca 5 m³", unit: "" },
+        { label: "Typy", value: "plošinový + suťový", unit: "" },
+        { label: "Max. náklad", value: "cca 5 t", unit: "" },
       ],
-      blurb: "Suťový i plošinový, 4,5 m (~5 m³). Přistavení a odvoz – i bez bagru, jen na materiál.",
+      blurb:
+        "Suťový i plošinový, 4,5 m (cca 5 m³). Přistavení a odvoz – i bez bagru, jen na materiál.",
     },
   ],
   pricing: [
@@ -354,14 +359,14 @@ export const site = {
       start: 0.58,
       end: 0.84,
       title: "Stísněné prostory",
-      subtitle: ex("1,74 m"),
+      subtitle: "1,74 m",
       detail: "šířka stroje",
     },
     {
       start: 0.84,
       end: 1,
       title: "Jdeme do hloubky",
-      subtitle: ex("3,45 m"),
+      subtitle: "3,45 m",
       detail: "hloubka výkopu",
     },
   ],

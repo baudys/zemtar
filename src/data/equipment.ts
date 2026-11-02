@@ -1,10 +1,10 @@
 /**
  * Technika – stroje, nástavce a kontejnery.
- * Parametry strojů: jen ověřené hodnoty; jinak `ex("{{…}}")`.
+ * Parametry strojů: katalog / odhad (cca) – doladit u provozovatele.
  * Nástavce minibagru: hodnoty ze štítků (listopad 2026).
  */
 
-import { ex, type SiteString } from "@/content/site";
+import { type SiteString } from "@/content/site";
 
 export type EquipmentKind = "stroj" | "nastavec" | "kontejner";
 
@@ -114,7 +114,7 @@ export const workTypes: WorkType[] = [
     label: "Přeprava / odtah",
     hook: "Stroje, auta, naviják",
     explanation:
-      "Přepravu a odtah řeší 4m plošina s navijákem na MAN TGL.",
+      "Přepravu strojů a mechanismů řeší plošina MULTITEC na MAN TGL 12.220.",
     slotLabels: ["Plošina", "Nosič"],
     inquirySlug: "plosina-navijak",
     equipmentIds: ["plosina-4m", "man-tgl"],
@@ -124,67 +124,83 @@ export const workTypes: WorkType[] = [
 export const equipment: EquipmentItem[] = [
   {
     id: "minibagr",
-    name: "Minibagr Komatsu",
+    name: "Komatsu PC38MR",
     kind: "stroj",
     description:
-      "Minibagr s obsluhou – výkopy, přípojky, terén i vrtání děr. Nástavec zvolíme podle práce.",
+      "Kompaktní pásové minirypadlo s uzavřenou kabinou a zkráceným přesahem zádi – výkopy, terénní úpravy i práce ve stísněných prostorách. Nástavec zvolíme podle práce.",
     params: [
-      { label: "Model", value: ex("{{KOMATSU_MODEL}}") },
-      { label: "Provozní hmotnost", value: ex("{{KOMATSU_HMOTNOST}}") },
+      { label: "Provozní hmotnost", value: "přibližně 3,7–4,0 t" },
+      { label: "Šířka", value: "1,74 m" },
+      { label: "Hloubka výkopu", value: "až 3,45 m" },
+      { label: "Kabina", value: "uzavřená" },
+      { label: "Podvozek", value: "pásový" },
+      { label: "Záď", value: "zkrácený přesah" },
     ],
     image: "/photos/pc38mr-studio.webp",
-    imageAlt: "Minibagr Komatsu",
+    imageAlt: "Minibagr Komatsu PC38MR",
     workIds: ["vykop", "uzky-vykop", "vrtani", "katrovani", "teren"],
   },
   {
     id: "man-tgl",
-    name: "Nákladní MAN TGL",
+    name: "MAN TGL 12.220",
     kind: "stroj",
     description:
-      "Nosič kontejnerů a plošiny – doprava materiálu, přistavení kontejneru i přeprava strojů.",
+      "Nákladní automobil s přepravní plošinou MULTITEC – přeprava stavebních strojů, mechanismů a další techniky, přistavení kontejnerů i odvoz materiálu.",
     params: [
-      { label: "Parametry", value: ex("{{MAN_TGL_PARAMETRY}}") },
+      { label: "Celková hmotnost", value: "12 000 kg" },
+      { label: "Výkon", value: "162 kW (220 k)" },
+      { label: "Nápravy", value: "4×2" },
+      { label: "Nástavba", value: "přepravní plošina MULTITEC" },
+      { label: "Nosnost plošiny", value: "cca 5 t" },
     ],
     image: "/photos/man-tgl-real.webp",
-    imageAlt: "Nákladní auto MAN TGL – nosič kontejnerů",
+    imageAlt: "Nákladní auto MAN TGL 12.220 s plošinou MULTITEC",
     workIds: ["odvoz-suti", "preprava"],
   },
   {
     id: "plosina-4m",
-    name: "4m plošina s navijákem",
+    name: "Přepravní plošina MULTITEC",
     kind: "stroj",
     description:
-      "Přeprava strojů a vozidel; lze použít i jako odtahovku. Funguje i samostatně, bez bagru.",
+      "Přepravní plošina MULTITEC na MAN TGL – stavební stroje, pracovní mechanismy a další technika. Funguje i samostatně, bez bagru.",
     params: [
-      { label: "Parametry", value: ex("{{PLOSINA_PARAMETRY}}") },
+      { label: "Nástavba", value: "MULTITEC" },
+      { label: "Délka", value: "cca 4,5 m" },
+      { label: "Nosnost", value: "cca 5 t" },
+      { label: "Nosič", value: "MAN TGL 12.220" },
     ],
     image: "/photos/man-tgl-studio.webp",
-    imageAlt: "4m plošina s navijákem na MAN TGL",
+    imageAlt: "Přepravní plošina MULTITEC na MAN TGL",
     workIds: ["preprava"],
   },
   {
     id: "kontejner-sutovy",
-    name: "Suťové kontejnery",
+    name: "Suťový kontejner",
     kind: "kontejner",
     description:
-      "Přistavení suťového kontejneru a odvoz materiálu – i bez bagru.",
+      "Odvoz stavební suti, betonu, zeminy, výkopového materiálu a odpadu při rekonstrukcích – i bez bagru.",
     params: [
-      { label: "Objem", value: ex("{{OBJEM_SUTOVY_KONTEJNER}}") },
+      { label: "Délka", value: "4 500 mm" },
+      { label: "Objem", value: "cca 5 m³" },
+      { label: "Max. náklad", value: "cca 5 t" },
     ],
     image: "/photos/placeholder/kontejner-sutovy.webp",
-    imageAlt: "Suťový kontejner",
+    imageAlt: "Suťový kontejner 4 500 mm",
     workIds: ["odvoz-suti"],
   },
   {
     id: "kontejner-plosinovy",
-    name: "Plošinové kontejnery",
+    name: "Plošinový kontejner",
     kind: "kontejner",
-    description: "Plošinový kontejner na materiál – přistavení a odvoz dle domluvy.",
+    description:
+      "Přeprava rozměrných a těžších nákladů – stroje, paletovaný materiál, ocelové konstrukce.",
     params: [
-      { label: "Parametry", value: ex("{{PLOSINOVY_KONTEJNER_PARAMETRY}}") },
+      { label: "Délka", value: "4 500 mm" },
+      { label: "Objem", value: "cca 5 m³" },
+      { label: "Max. náklad", value: "cca 5 t" },
     ],
     image: "/photos/placeholder/kontejner-plato.webp",
-    imageAlt: "Plošinový kontejner",
+    imageAlt: "Plošinový kontejner 4 500 mm",
     workIds: ["odvoz-suti"],
   },
   {
