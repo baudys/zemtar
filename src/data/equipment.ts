@@ -8,6 +8,15 @@ import { type SiteString } from "@/content/site";
 
 export type EquipmentKind = "stroj" | "nastavec" | "kontejner";
 
+export type WorkId =
+  | "vykop"
+  | "uzky-vykop"
+  | "vrtani"
+  | "katrovani"
+  | "teren"
+  | "odvoz-suti"
+  | "preprava";
+
 export type EquipmentParam = {
   label: string;
   value: SiteString;
@@ -16,6 +25,8 @@ export type EquipmentParam = {
 export type EquipmentItem = {
   id: string;
   name: string;
+  /** Krátký popisek ve výběru Techniky. */
+  shortName: string;
   kind: EquipmentKind;
   description: string;
   params: EquipmentParam[];
@@ -28,14 +39,11 @@ export type EquipmentItem = {
   workIds: WorkId[];
 };
 
-export type WorkId =
-  | "vykop"
-  | "uzky-vykop"
-  | "vrtani"
-  | "katrovani"
-  | "teren"
-  | "odvoz-suti"
-  | "preprava";
+export const equipmentKindLabel: Record<EquipmentKind, string> = {
+  stroj: "Stroj",
+  nastavec: "Nástavec",
+  kontejner: "Kontejner",
+};
 
 export type WorkType = {
   id: WorkId;
@@ -125,6 +133,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "minibagr",
     name: "Komatsu PC38MR",
+    shortName: "Minibagr",
     kind: "stroj",
     description:
       "Kompaktní pásové minirypadlo s uzavřenou kabinou a zkráceným přesahem zádi – výkopy, terénní úpravy i práce ve stísněných prostorách. Nástavec zvolíme podle práce.",
@@ -143,6 +152,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "man-tgl",
     name: "MAN TGL 12.220",
+    shortName: "MAN TGL",
     kind: "stroj",
     description:
       "Nákladní automobil s přepravní plošinou MULTITEC – přeprava stavebních strojů, mechanismů a další techniky, přistavení kontejnerů i odvoz materiálu.",
@@ -160,6 +170,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "plosina-4m",
     name: "Přepravní plošina MULTITEC",
+    shortName: "Plošina",
     kind: "stroj",
     description:
       "Přepravní plošina MULTITEC na MAN TGL – stavební stroje, pracovní mechanismy a další technika. Funguje i samostatně, bez bagru.",
@@ -176,6 +187,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "kontejner-sutovy",
     name: "Suťový kontejner",
+    shortName: "Suťový kontejner",
     kind: "kontejner",
     description:
       "Odvoz stavební suti, betonu, zeminy, výkopového materiálu a odpadu při rekonstrukcích – i bez bagru.",
@@ -191,6 +203,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "kontejner-plosinovy",
     name: "Plošinový kontejner",
+    shortName: "Plošinový kontejner",
     kind: "kontejner",
     description:
       "Přeprava rozměrných a těžších nákladů – stroje, paletovaný materiál, ocelové konstrukce.",
@@ -206,6 +219,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "vrtak-ht4",
     name: "Hydraulický vrták Hošek Trade HT4",
+    shortName: "Vrták HT4",
     kind: "nastavec",
     description:
       "Vrtání děr pro sloupky a oplocení – šnek 200 mm, zuby z karbidu wolframu.",
@@ -223,6 +237,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "lzice-prosevaci-600",
     name: "Prosévací lžíce Triga 600 mm",
+    shortName: "Prosévací 600",
     kind: "nastavec",
     description: "Roštová lžíce na kátrování a prosévání zeminy.",
     params: [
@@ -240,6 +255,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "lzice-zubova-600",
     name: "Zubová lžíce Triga 600 mm",
+    shortName: "Zubová 600",
     kind: "nastavec",
     description: "Běžné výkopy – rychloupínač Symlock.",
     params: [
@@ -258,6 +274,7 @@ export const equipment: EquipmentItem[] = [
   {
     id: "lzice-300",
     name: "Lžíce Triga 300 mm",
+    shortName: "Lžíce 300",
     kind: "nastavec",
     description: "Úzké výkopy – přípojky vody, kanalizace a elektro.",
     params: [
@@ -275,13 +292,86 @@ export const equipment: EquipmentItem[] = [
   },
 ];
 
-export const equipmentByKind = {
-  stroj: equipment.filter((e) => e.kind === "stroj"),
-  nastavec: equipment.filter((e) => e.kind === "nastavec"),
-  kontejner: equipment.filter((e) => e.kind === "kontejner"),
-} as const;
+export function getEquipment(id: string): EquipmentItem | undefined {
+  return equipment.find((e) => e.id === id);
+}
 
 export function getWorkType(id: WorkId | null): WorkType | undefined {
   if (!id) return undefined;
   return workTypes.find((w) => w.id === id);
 }
+
+/**
+ * Primární nabídka Techniky: bagr (+ nástavce) a kamion (+ plošina, kontejnery).
+ * Lžíce, vrták a plošina nejsou samostatné položky v horním výběru.
+ */
+export type FleetUnit = {
+  id: string;
+  shortName: string;
+  primaryId: string;
+  accessoryIds: string[];
+  /** Popisek bloku příslušenství. */
+  accessoryLabel: string;
+};
+
+export const fleetUnits: FleetUnit[] = [
+  {
+    id: "bagr",
+    shortName: "Minibagr",
+    primaryId: "minibagr",
+    accessoryIds: [
+      "lzice-zubova-600",
+      "lzice-300",
+      "lzice-prosevaci-600",
+      "vrtak-ht4",
+    ],
+    accessoryLabel: "Nástavce",
+  },
+  {
+    id: "kamion",
+    shortName: "MAN TGL",
+    primaryId: "man-tgl",
+    accessoryIds: ["plosina-4m", "kontejner-sutovy", "kontejner-plosinovy"],
+    accessoryLabel: "Plošina a kontejnery",
+  },
+];
+
+export function getFleetUnit(id: string): FleetUnit | undefined {
+  return fleetUnits.find((u) => u.id === id);
+}
+
+export function fleetUnitForEquipment(equipmentId: string): FleetUnit | undefined {
+  return fleetUnits.find(
+    (u) =>
+      u.primaryId === equipmentId || u.accessoryIds.includes(equipmentId),
+  );
+}
+
+/** Nástavec / druhá položka doporučené sestavy pro práci u dané jednotky. */
+export function accessoryForWork(
+  unit: FleetUnit,
+  workId: WorkId,
+): EquipmentItem | undefined {
+  const work = getWorkType(workId);
+  if (!work) return undefined;
+  const accessoryId = work.equipmentIds.find((id) =>
+    unit.accessoryIds.includes(id),
+  );
+  return accessoryId ? getEquipment(accessoryId) : undefined;
+}
+
+export function worksForUnit(unit: FleetUnit): WorkType[] {
+  const primary = getEquipment(unit.primaryId);
+  const ids = new Set<WorkId>(primary?.workIds ?? []);
+  for (const id of unit.accessoryIds) {
+    const item = getEquipment(id);
+    item?.workIds.forEach((w) => ids.add(w));
+  }
+  return workTypes.filter((w) => ids.has(w.id));
+}
+
+export const equipmentByKind = {
+  stroj: equipment.filter((e) => e.kind === "stroj"),
+  nastavec: equipment.filter((e) => e.kind === "nastavec"),
+  kontejner: equipment.filter((e) => e.kind === "kontejner"),
+} as const;

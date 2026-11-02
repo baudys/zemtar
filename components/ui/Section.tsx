@@ -120,7 +120,7 @@ export function SectionHeader({
         {title}
       </h2>
       {children ? (
-        <p className="mt-5 max-w-xl text-base leading-relaxed text-white/65 md:text-lg">
+        <p className="mt-5 text-base leading-relaxed text-white/65 md:text-lg">
           {children}
         </p>
       ) : null}
