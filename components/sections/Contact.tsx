@@ -331,25 +331,24 @@ export function Contact() {
 
   return (
     <Section id="kontakt" tone="panel" className="!border-t-0">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeader title="Poptávka" />
+      <SectionHeader title="Poptávka" />
 
-        <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-10 sm:gap-y-2">
-          <p className="text-base text-white/85 sm:text-lg">
-            <span className="text-white/60">Telefon: </span>
-            <a
-              href={phoneHref}
-              className="text-white hover:text-komatsu-yellow"
-              onClick={() => track("phone_click", { source: "contact" })}
-            >
-              <Placeholder value={site.phone} />
-            </a>
-          </p>
-          <p className="text-base text-white/85 sm:text-lg">
-            <span className="text-white/60">Provozní doba: </span>
-            <Placeholder value={site.openingHours} />
-          </p>
-        </div>
+      <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-10 sm:gap-y-2">
+        <p className="text-base text-white/85 sm:text-lg">
+          <span className="text-white/60">Telefon: </span>
+          <a
+            href={phoneHref}
+            className="text-white hover:text-komatsu-yellow"
+            onClick={() => track("phone_click", { source: "contact" })}
+          >
+            <Placeholder value={site.phone} />
+          </a>
+        </p>
+        <p className="text-base text-white/85 sm:text-lg">
+          <span className="text-white/60">Provozní doba: </span>
+          <Placeholder value={site.openingHours} />
+        </p>
+      </div>
 
         {applied || fleetApplied ? (
           <div className="mt-8 space-y-3">
@@ -805,12 +804,8 @@ export function Contact() {
                 ) : null}
               </div>
             </form>
-            <p className="mt-4 text-sm text-white/60">
-              Po odeslání se vám ozveme telefonicky a vše domluvíme.
-            </p>
           </div>
         )}
-      </div>
     </Section>
   );
 }
