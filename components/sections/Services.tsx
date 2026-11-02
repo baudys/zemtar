@@ -127,7 +127,7 @@ export function Services() {
     <Section
       id="sluzby"
       tone="panel"
-      className="!border-t-0 !pt-10 md:!pt-32"
+      className="!border-t-0 !pt-10 md:!pt-20"
     >
       <SectionHeader title="Služby">{site.servicesIntro}</SectionHeader>
 

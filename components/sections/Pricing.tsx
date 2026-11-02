@@ -6,6 +6,7 @@ import { formatCzk, site } from "@/content/site";
 import { landmarkForKm } from "@/content/map-towns";
 import { Button } from "@/components/ui/Button";
 import { CountUp } from "@/components/ui/CountUp";
+import { Section } from "@/components/ui/Section";
 import { YellowRange } from "@/components/ui/YellowRange";
 import {
   type ContainerMode,
@@ -27,7 +28,7 @@ const CONTAINER_OPTIONS: ReadonlyArray<{
 ];
 
 function FieldHint({ children }: { children: ReactNode }) {
-  return <p className="mt-1 text-[11px] leading-snug text-white/60">{children}</p>;
+  return <p className="mt-2 text-xs leading-snug text-white/60">{children}</p>;
 }
 
 function FieldLabel({
@@ -66,23 +67,19 @@ export function Pricing() {
   }
 
   return (
-    <section
-      id="cenik"
-      className="flex min-h-svh flex-col justify-center border-t border-line bg-deep py-4 sm:py-6 md:py-8"
-    >
-      <div className="mx-auto w-full max-w-6xl px-4 md:px-8">
-        <header className="max-w-3xl">
-          <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl">
-            Ceník
-          </h2>
-          <p className="mt-3 max-w-xl text-base leading-relaxed text-white/65 md:mt-5 md:text-lg">
-            {site.pricingDisclaimer}
-          </p>
-        </header>
+    <Section id="cenik" tone="deep" className="!border-t-0">
+      <header className="max-w-3xl">
+        <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl">
+          Ceník
+        </h2>
+        <p className="mt-3 max-w-xl text-base leading-relaxed text-white/65 md:mt-5 md:text-lg">
+          {site.pricingDisclaimer}
+        </p>
+      </header>
 
-        <div className="mt-3 grid gap-3 sm:mt-4 sm:gap-4 lg:mt-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)] lg:items-start lg:gap-6">
-          <fieldset className="min-w-0 space-y-2.5 border-0 p-0 sm:space-y-3.5">
-            <legend className="sr-only">Parametry zakázky</legend>
+      <div className="mt-5 grid gap-5 sm:mt-6 sm:gap-6 lg:mt-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)] lg:items-start lg:gap-8">
+        <fieldset className="min-w-0 space-y-4 border-0 p-0 sm:space-y-5">
+          <legend className="sr-only">Parametry zakázky</legend>
 
             <div>
               <FieldLabel htmlFor={hoursId}>Hodiny práce</FieldLabel>
@@ -155,7 +152,7 @@ export function Pricing() {
               <div
                 role="radiogroup"
                 aria-label="Typ kontejneru"
-                className="mt-2 flex flex-wrap gap-1.5"
+                className="mt-2.5 flex flex-wrap gap-2"
               >
                 {CONTAINER_OPTIONS.map((opt) => {
                   const selected = draft.containerMode === opt.value;
@@ -222,14 +219,10 @@ export function Pricing() {
                   </span>
                 </label>
               </div>
-            ) : (
-              <FieldHint>
-                Bez kontejneru – odvoz materiálu řešíme zvlášť v poptávce.
-              </FieldHint>
-            )}
+            ) : null}
           </fieldset>
 
-            <aside
+          <aside
             className="flex min-w-0 flex-col border border-line bg-void/60 p-2.5 sm:p-4 lg:sticky lg:top-24"
             aria-live="polite"
             aria-atomic="true"
@@ -279,8 +272,7 @@ export function Pricing() {
               Odhad není závazná nabídka. Finální cenu potvrdíme předem.
             </p>
           </aside>
-        </div>
       </div>
-    </section>
+    </Section>
   );
 }

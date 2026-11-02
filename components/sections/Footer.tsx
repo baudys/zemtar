@@ -6,7 +6,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-10 border-t-2 border-komatsu-yellow bg-void pt-20 pb-16 md:mt-14 md:pt-24 md:pb-20">
+    <footer className="border-t-2 border-komatsu-yellow bg-void pt-16 pb-14 md:pt-20 md:pb-16">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-12 md:gap-10 md:px-8">
         <div className="md:col-span-4">
           {/* eslint-disable-next-line @next/next/no-img-element -- brand SVG */}

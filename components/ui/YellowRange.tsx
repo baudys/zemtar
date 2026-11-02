@@ -13,6 +13,7 @@ type Props = {
   thumbLabel: string;
   /** Menší vertikální rezerva (např. ceník v jednom viewportu). */
   compact?: boolean;
+  disabled?: boolean;
   "aria-valuetext"?: string;
   "aria-label"?: string;
 };
@@ -26,6 +27,7 @@ export function YellowRange({
   onChange,
   thumbLabel,
   compact = false,
+  disabled = false,
   "aria-valuetext": ariaValueText,
   "aria-label": ariaLabel,
 }: Props) {
@@ -35,13 +37,10 @@ export function YellowRange({
   const pct = ((value - min) / span) * 100;
 
   return (
-    <div className={compact ? "relative mt-2 pt-4" : "relative mt-8 pt-7"}>
+    <div className={compact ? "relative mt-3 pt-6" : "relative mt-8 pt-7"}>
       <div
-        className={[
-          "pointer-events-none absolute top-0 -translate-x-1/2 font-display text-komatsu-yellow tabular-nums",
-          compact ? "text-xs" : "text-sm",
-        ].join(" ")}
-        style={{ left: `${pct}%` }}
+        className="pointer-events-none absolute top-0 -translate-x-1/2 font-display text-sm leading-none text-komatsu-yellow tabular-nums"
+        style={{ left: `clamp(1.1rem, ${pct}%, calc(100% - 1.1rem))` }}
         aria-hidden
       >
         {thumbLabel}
@@ -59,10 +58,14 @@ export function YellowRange({
           max={max}
           step={step}
           value={value}
+          disabled={disabled}
           onChange={(e) => onChange(Number(e.target.value))}
           aria-valuetext={ariaValueText}
           aria-label={ariaLabel}
-          className="yellow-range absolute inset-0 h-full w-full cursor-pointer appearance-none bg-transparent"
+          className={[
+            "yellow-range absolute inset-0 h-full w-full appearance-none bg-transparent",
+            disabled ? "cursor-not-allowed" : "cursor-pointer",
+          ].join(" ")}
         />
       </div>
     </div>

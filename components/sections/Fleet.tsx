@@ -11,6 +11,7 @@ import { useQuote } from "@/components/quote/QuoteContext";
 import { AssetOrPlaceholder } from "@/components/ui/AssetOrPlaceholder";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { Section } from "@/components/ui/Section";
 import { track } from "@vercel/analytics";
 import { isPlaceholderPhotoPath, showPlaceholders } from "@/lib/placeholders";
 
@@ -118,19 +119,15 @@ export function Fleet() {
   }
 
   return (
-    <section
-      id="technika"
-      className="border-t border-line bg-void py-8 md:py-12 lg:py-16"
-    >
-      <div className="mx-auto max-w-6xl px-4 md:px-8">
-        <header className="max-w-2xl">
-          <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl">
-            Technika
-          </h2>
-          <p className="mt-2 text-sm text-white/65 sm:mt-3 sm:text-base md:text-lg">
-            Vyberte typ práce – sestavu a fotku hned uvidíte. Bez cen.
-          </p>
-        </header>
+    <Section id="technika" tone="void">
+      <header className="max-w-2xl">
+        <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl">
+          Technika
+        </h2>
+        <p className="mt-2 text-sm text-white/65 sm:mt-3 sm:text-base md:text-lg">
+          Vyberte typ práce – sestavu a fotku hned uvidíte. Bez cen.
+        </p>
+      </header>
 
         {/* Mobil: typ práce → fotka → sestava. Desktop: fotka | panel. */}
         <div className="mt-5 grid min-w-0 gap-4 sm:mt-6 sm:gap-5 lg:mt-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.85fr)] lg:items-start lg:gap-10">
@@ -270,7 +267,6 @@ export function Fleet() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }

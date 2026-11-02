@@ -31,7 +31,7 @@ export function Section({ id, tone = "void", children, className = "" }: Props) 
   return (
     <section
       id={id}
-      className={`${tones[tone]} border-t border-line py-24 md:py-32 ${className}`}
+      className={`${tones[tone]} border-t border-line py-16 md:py-20 ${className}`}
     >
       <div className="mx-auto max-w-6xl px-4 md:px-8">{children}</div>
     </section>
