@@ -37,10 +37,10 @@ export function YellowRange({
   const pct = ((value - min) / span) * 100;
 
   return (
-    <div className={compact ? "relative mt-3 pt-6" : "relative mt-8 pt-7"}>
+    <div className={compact ? "relative mt-2 pt-5" : "relative mt-8 pt-7"}>
       <div
-        className="pointer-events-none absolute top-0 -translate-x-1/2 font-display text-sm leading-none text-komatsu-yellow tabular-nums"
-        style={{ left: `clamp(1.1rem, ${pct}%, calc(100% - 1.1rem))` }}
+        className="pointer-events-none absolute top-0 whitespace-nowrap font-display text-sm leading-none text-komatsu-yellow tabular-nums"
+        style={{ left: `${pct}%`, translate: `-${pct}% 0` }}
         aria-hidden
       >
         {thumbLabel}

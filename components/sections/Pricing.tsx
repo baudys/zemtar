@@ -27,26 +27,64 @@ const CONTAINER_OPTIONS: ReadonlyArray<{
   { value: "sutovy", label: "Suťový" },
 ];
 
-function FieldHint({ children }: { children: ReactNode }) {
-  return <p className="mt-2 text-xs leading-snug text-white/60">{children}</p>;
-}
-
-function FieldLabel({
-  htmlFor,
+function ControlGroup({
+  title,
   children,
 }: {
-  htmlFor?: string;
+  title: string;
   children: ReactNode;
 }) {
-  const className = "block text-xs text-white/65 sm:text-sm";
-  if (htmlFor) {
-    return (
-      <label htmlFor={htmlFor} className={className}>
+  return (
+    <div className="min-w-0">
+      <p className="font-display text-base uppercase tracking-tight text-white sm:text-lg">
+        {title}
+      </p>
+      <div className="mt-2.5 divide-y divide-line/80 border-y border-line/80 sm:mt-3">
         {children}
-      </label>
-    );
-  }
-  return <p className={className}>{children}</p>;
+      </div>
+    </div>
+  );
+}
+
+function ControlRow({
+  label,
+  htmlFor,
+  rate,
+  note,
+  children,
+}: {
+  label: ReactNode;
+  htmlFor?: string;
+  rate?: ReactNode;
+  note?: ReactNode;
+  children: ReactNode;
+}) {
+  const labelClass =
+    "min-w-0 text-sm leading-snug text-white sm:text-[0.9375rem]";
+  return (
+    <div className="py-3 sm:py-3.5">
+      <div className="flex items-baseline justify-between gap-3">
+        {htmlFor ? (
+          <label htmlFor={htmlFor} className={labelClass}>
+            {label}
+          </label>
+        ) : (
+          <p className={labelClass}>{label}</p>
+        )}
+        {rate ? (
+          <p className="shrink-0 text-xs tabular-nums text-komatsu-yellow sm:text-sm">
+            {rate}
+          </p>
+        ) : null}
+      </div>
+      {note ? (
+        <p className="mt-1 text-[11px] leading-snug text-white/60 sm:text-xs">
+          {note}
+        </p>
+      ) : null}
+      {children}
+    </div>
+  );
 }
 
 export function Pricing() {
@@ -67,22 +105,27 @@ export function Pricing() {
   }
 
   return (
-    <Section id="cenik" tone="deep" className="!border-t-0">
+    <Section id="cenik" tone="deep" className="!border-t-0 !py-12 md:!py-14">
       <header className="max-w-3xl">
-        <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl">
+        <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-5xl lg:text-6xl">
           Ceník
         </h2>
-        <p className="mt-3 max-w-xl text-base leading-relaxed text-white/65 md:mt-5 md:text-lg">
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/65 md:mt-3 md:text-base">
           {site.pricingDisclaimer}
         </p>
       </header>
 
-      <div className="mt-5 grid gap-5 sm:mt-6 sm:gap-6 lg:mt-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)] lg:items-start lg:gap-8">
-        <fieldset className="min-w-0 space-y-4 border-0 p-0 sm:space-y-5">
+      <div className="mt-5 grid gap-5 sm:mt-6 lg:mt-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)] lg:items-start lg:gap-8">
+        <fieldset className="min-w-0 space-y-5 border-0 p-0 sm:space-y-6">
           <legend className="sr-only">Parametry zakázky</legend>
 
-            <div>
-              <FieldLabel htmlFor={hoursId}>Hodiny práce</FieldLabel>
+          <ControlGroup title="Bagr a doprava">
+            <ControlRow
+              htmlFor={hoursId}
+              label="Hodiny práce"
+              rate={`${formatCzk(quoteRates.hourly)}/h`}
+              note={`Min. ${quoteRates.minHours} h · vč. naložení / přepravy / vyložení`}
+            >
               <YellowRange
                 id={hoursId}
                 compact
@@ -94,14 +137,14 @@ export function Pricing() {
                 thumbLabel={`${estimate.hours} h`}
                 aria-valuetext={`${estimate.hours} hodin`}
               />
-              <FieldHint>
-                Min. {quoteRates.minHours} h · {formatCzk(quoteRates.hourly)}/h
-                · vč. naložení/přepravy/vyložení
-              </FieldHint>
-            </div>
+            </ControlRow>
 
-            <div>
-              <FieldLabel htmlFor={idleId}>Prostoje</FieldLabel>
+            <ControlRow
+              htmlFor={idleId}
+              label="Prostoje"
+              rate={`${formatCzk(quoteRates.idleRate)}/h`}
+              note="Bagr stojí a čeká"
+            >
               <YellowRange
                 id={idleId}
                 compact
@@ -113,13 +156,27 @@ export function Pricing() {
                 thumbLabel={`${estimate.idleHours} h`}
                 aria-valuetext={`${estimate.idleHours} hodin prostojů`}
               />
-              <FieldHint>
-                {formatCzk(quoteRates.idleRate)}/h · bagr stojí a čeká
-              </FieldHint>
-            </div>
+            </ControlRow>
 
-            <div>
-              <FieldLabel htmlFor={kmId}>Vzdálenost (jedním směrem)</FieldLabel>
+            <ControlRow
+              htmlFor={kmId}
+              label="Vzdálenost (jedním směrem)"
+              rate={`${formatCzk(quoteRates.kmRate)}/km`}
+              note={
+                <>
+                  Tam i zpět
+                  {townHint ? (
+                    <>
+                      {" "}
+                      ·{" "}
+                      <span className="text-komatsu-yellow">
+                        např. {townHint}
+                      </span>
+                    </>
+                  ) : null}
+                </>
+              }
+            >
               <YellowRange
                 id={kmId}
                 compact
@@ -135,20 +192,14 @@ export function Pricing() {
                     : `${estimate.kmOneWay} kilometrů`
                 }
               />
-              <FieldHint>
-                Tam i zpět · {formatCzk(quoteRates.kmRate)}/km
-                {townHint ? (
-                  <>
-                    {" "}
-                    ·{" "}
-                    <span className="text-komatsu-yellow">např. {townHint}</span>
-                  </>
-                ) : null}
-              </FieldHint>
-            </div>
+            </ControlRow>
+          </ControlGroup>
 
-            <div>
-              <FieldLabel>Kontejner 4,5&nbsp;m (~5&nbsp;m³)</FieldLabel>
+          <ControlGroup title="Kontejner 4,5 m">
+            <ControlRow
+              label="Typ (~5 m³)"
+              note="Přistavení a stání. Likvidace zvlášť."
+            >
               <div
                 role="radiogroup"
                 aria-label="Typ kontejneru"
@@ -174,12 +225,15 @@ export function Pricing() {
                   );
                 })}
               </div>
-            </div>
+            </ControlRow>
 
             {hasContainer ? (
-              <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-                <div>
-                  <FieldLabel htmlFor={daysId}>Dny stání</FieldLabel>
+              <div className="grid gap-0 sm:grid-cols-2">
+                <ControlRow
+                  htmlFor={daysId}
+                  label="Dny stání"
+                  rate={formatCzk(standingPrice)}
+                >
                   <YellowRange
                     id={daysId}
                     compact
@@ -194,11 +248,10 @@ export function Pricing() {
                     thumbLabel={`${estimate.containerDays} d`}
                     aria-valuetext={`${estimate.containerDays} dní stání`}
                   />
-                  <FieldHint>Teď {formatCzk(standingPrice)}</FieldHint>
-                </div>
+                </ControlRow>
                 <label
                   htmlFor={liquidationId}
-                  className="flex cursor-pointer items-start gap-2 self-end pb-1 sm:pt-6"
+                  className="flex h-full cursor-pointer items-start gap-2.5 border-t border-line/80 py-3 sm:border-t-0 sm:border-l sm:px-4 sm:py-3.5"
                 >
                   <input
                     id={liquidationId}
@@ -210,68 +263,71 @@ export function Pricing() {
                     className="mt-0.5 size-4 shrink-0 accent-komatsu-yellow"
                   />
                   <span>
-                    <span className="block text-sm text-white/85">
+                    <span className="block text-sm text-white">
                       Odvoz a likvidace
                     </span>
-                    <span className="mt-0.5 block text-[11px] text-white/60">
+                    <span className="mt-1 block text-[11px] text-white/60 sm:text-xs">
                       od {formatCzk(quoteRates.liquidationFrom)} · dle druhu
                     </span>
                   </span>
                 </label>
               </div>
             ) : null}
-          </fieldset>
+          </ControlGroup>
+        </fieldset>
 
-          <aside
-            className="flex min-w-0 flex-col border border-line bg-void/60 p-2.5 sm:p-4 lg:sticky lg:top-24"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <p className="text-xs text-white/65">Orientační součet</p>
+        <aside
+          className="flex min-w-0 flex-col border border-line bg-void/60 p-3 sm:p-4 lg:sticky lg:top-24"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <p className="font-display text-base uppercase tracking-tight text-white sm:text-lg">
+            Orientační součet
+          </p>
 
-            <ul className="mt-1.5 space-y-1.5 sm:mt-2 sm:space-y-2.5 lg:mt-3">
-              {estimate.lines.map((line) => (
-                <li
-                  key={line.id}
-                  className="flex items-baseline justify-between gap-3 border-b border-line/60 pb-1.5 sm:pb-2"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm text-white/85">{line.label}</p>
-                    {line.detail ? (
-                      <p className="mt-0.5 truncate text-[11px] text-white/60">
-                        {line.detail}
-                      </p>
-                    ) : null}
-                  </div>
-                  <p className="shrink-0 font-display text-base text-white tabular-nums">
-                    <CountUp value={line.amount} />
-                  </p>
-                </li>
-              ))}
-            </ul>
+          <ul className="mt-2.5 space-y-0 divide-y divide-line/80 border-y border-line/80 sm:mt-3">
+            {estimate.lines.map((line) => (
+              <li
+                key={line.id}
+                className="flex items-baseline justify-between gap-3 py-2 sm:py-2.5"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm text-white">{line.label}</p>
+                  {line.detail ? (
+                    <p className="mt-0.5 truncate text-[11px] text-white/60">
+                      {line.detail}
+                    </p>
+                  ) : null}
+                </div>
+                <p className="shrink-0 font-display text-base text-white tabular-nums">
+                  <CountUp value={line.amount} />
+                </p>
+              </li>
+            ))}
+          </ul>
 
-            <div className="mt-2 border-t border-line pt-2 sm:mt-3 sm:pt-3">
-              <p className="text-xs text-white/65">Celkem bez DPH</p>
-              <p className="mt-0.5 font-display text-2xl uppercase tracking-tight text-white tabular-nums sm:text-4xl">
-                <CountUp value={estimate.totalEx} />
-              </p>
-              <p className="mt-0.5 text-xs text-white/60 sm:text-sm">
-                <CountUp value={estimate.totalInc} /> s DPH (
-                {Math.round(site.vatRate * 100)}&nbsp;%)
-              </p>
-            </div>
-
-            <Button
-              type="button"
-              className="mt-2.5 w-full py-2.5 sm:mt-4"
-              onClick={continueToContact}
-            >
-              Pokračovat k poptávce
-            </Button>
-            <p className="mt-1.5 text-[11px] leading-snug text-white/60 sm:mt-2">
-              Odhad není závazná nabídka. Finální cenu potvrdíme předem.
+          <div className="mt-3 pt-1 sm:mt-4">
+            <p className="text-xs text-white/60">Celkem bez DPH</p>
+            <p className="mt-0.5 font-display text-2xl uppercase tracking-tight text-white tabular-nums sm:text-4xl">
+              <CountUp value={estimate.totalEx} />
             </p>
-          </aside>
+            <p className="mt-0.5 text-xs text-white/60 sm:text-sm">
+              <CountUp value={estimate.totalInc} /> s DPH (
+              {Math.round(site.vatRate * 100)}&nbsp;%)
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            className="mt-3 w-full py-2.5 sm:mt-4"
+            onClick={continueToContact}
+          >
+            Pokračovat k poptávce
+          </Button>
+          <p className="mt-1.5 text-[11px] leading-snug text-white/60 sm:mt-2">
+            Odhad není závazná nabídka. Finální cenu potvrdíme předem.
+          </p>
+        </aside>
       </div>
     </Section>
   );
