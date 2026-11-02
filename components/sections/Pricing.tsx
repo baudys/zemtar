@@ -52,17 +52,19 @@ function ControlRow({
   rate,
   note,
   children,
+  className = "",
 }: {
   label: ReactNode;
   htmlFor?: string;
   rate?: ReactNode;
   note?: ReactNode;
   children: ReactNode;
+  className?: string;
 }) {
   const labelClass =
     "min-w-0 text-sm leading-snug text-white sm:text-[0.9375rem]";
   return (
-    <div className="py-3 sm:py-3.5">
+    <div className={`py-3 sm:py-3.5 ${className}`}>
       <div className="flex items-baseline justify-between gap-3">
         {htmlFor ? (
           <label htmlFor={htmlFor} className={labelClass}>
@@ -233,6 +235,7 @@ export function Pricing() {
                   htmlFor={daysId}
                   label="Dny stání"
                   rate={formatCzk(standingPrice)}
+                  className="sm:pr-8"
                 >
                   <YellowRange
                     id={daysId}
