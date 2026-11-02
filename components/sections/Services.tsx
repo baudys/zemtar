@@ -11,6 +11,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { site } from "@/content/site";
 import { Section, SectionHeader } from "@/components/ui/Section";
+import { Card } from "@/components/ui/Card";
 import { AssetOrPlaceholder } from "@/components/ui/AssetOrPlaceholder";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 
@@ -48,7 +49,7 @@ export function Services() {
   useEffect(() => {
     if (reduced || !listRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.from(".service-row", {
+      gsap.from(".service-card", {
         y: 28,
         opacity: 0,
         duration: 0.65,
@@ -97,7 +98,7 @@ export function Services() {
     }
   }, [activeId, previewSrc, finePointer, reduced]);
 
-  const onRowEnter = useCallback(
+  const onCardEnter = useCallback(
     (id: string, src: string, alt: string) => {
       if (!finePointer || reduced) return;
       setActiveId(id);
@@ -106,12 +107,12 @@ export function Services() {
     [finePointer, reduced],
   );
 
-  const onRowLeave = useCallback(() => {
+  const onCardLeave = useCallback(() => {
     if (!finePointer || reduced) return;
     setActiveId(null);
   }, [finePointer, reduced]);
 
-  const onRowMove = useCallback(
+  const onCardMove = useCallback(
     (e: MouseEvent) => {
       if (!finePointer || reduced) return;
       const offsetX = 24;
@@ -128,46 +129,42 @@ export function Services() {
       tone="panel"
       className="!border-t-0 !pt-10 md:!pt-32"
     >
-      <SectionHeader title="Služby">
-        Od výkopu po odvoz materiálu – minibagr s obsluhou a vlastní dopravou.
-      </SectionHeader>
+      <SectionHeader title="Služby">{site.servicesIntro}</SectionHeader>
 
       <div
         ref={listRef}
-        className="mt-14 divide-y divide-line border-y border-line"
+        className="mt-14 grid gap-4 sm:grid-cols-2"
       >
         {site.services.map((s) => (
           <article
             key={s.id}
-            className={`service-row group grid gap-4 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-start md:gap-10 md:py-10 ${
+            id={s.id}
+            className={`service-card scroll-mt-28 ${
               finePointer && !reduced ? "cursor-default" : ""
             }`}
-            onMouseEnter={() => onRowEnter(s.id, s.image, s.imageAlt)}
-            onMouseLeave={onRowLeave}
-            onMouseMove={onRowMove}
+            onMouseEnter={() => onCardEnter(s.id, s.image, s.imageAlt)}
+            onMouseLeave={onCardLeave}
+            onMouseMove={onCardMove}
           >
-            <div className="min-w-0">
-              <h3
-                className={`relative inline-block font-display text-2xl uppercase md:text-3xl ${
-                  finePointer
-                    ? "after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-komatsu-yellow after:transition-transform after:duration-500 after:ease-out group-hover:after:scale-x-100"
-                    : ""
-                }`}
-              >
+            <Card className="h-full transition-colors duration-200 hover:border-white/30">
+              <h3 className="font-display text-xl uppercase leading-snug text-white md:text-2xl">
                 {s.title}
               </h3>
-            </div>
-            <ul className="space-y-2 text-sm text-white/70">
-              {s.bullets.map((b) => (
-                <li key={b} className="flex gap-3">
-                  <span
-                    className="mt-2 h-px w-4 shrink-0 bg-komatsu-yellow/70"
-                    aria-hidden
-                  />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
+              <p className="mt-3 text-sm leading-relaxed text-white/70 md:text-base">
+                {s.text}
+              </p>
+              <ul className="mt-5 space-y-2 text-sm text-white/60">
+                {s.bullets.map((b) => (
+                  <li key={b} className="flex gap-3">
+                    <span
+                      className="mt-2 h-px w-4 shrink-0 bg-komatsu-yellow/70"
+                      aria-hidden
+                    />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
           </article>
         ))}
       </div>

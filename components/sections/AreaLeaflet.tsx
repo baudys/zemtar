@@ -89,7 +89,7 @@ function MapSvgFallback() {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src="/map/oblast.svg"
-      alt="Schéma oblasti do 50 km od Poběžovic"
+      alt="Mapa Domažlicka a okolí – základna Poběžovice"
       className="absolute inset-0 h-full w-full object-contain bg-void p-2"
     />
   );
@@ -333,7 +333,7 @@ export function AreaLeaflet() {
       ref={hostRef}
       className="area-leaflet absolute inset-0"
       role="region"
-      aria-label="Mapa oblasti do 50 km od Poběžovic. Žluté kružnice značí 10, 25 a 50 km."
+      aria-label="Mapa Domažlicka a okolí se základnou v Poběžovicích. Žluté kružnice jsou orientační vzdálenosti 10, 25 a 50 km – ne tvrdá hranice působnosti."
     >
       {!active ? (
         <div className="grid h-full place-items-center bg-void text-sm text-white/45">

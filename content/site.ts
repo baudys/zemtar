@@ -131,16 +131,6 @@ export const site = {
     years: ex("[X let praxe]"),
     jobs: ex("[X zakázek]"),
   },
-  pricingTeaser: {
-    title: "Orientační ceník",
-    text: "Podívejte se na hodinovky a dopravu – přesnou cenu vždy potvrdíme předem.",
-    cta: "Zobrazit ceník",
-  },
-  inquiryTeaser: {
-    title: "Nezávazná poptávka",
-    text: "Popište zakázku ve formuláři – ozveme se a vše probereme po telefonu.",
-    cta: "Vyplnit poptávku",
-  },
   nav: [
     { href: "#sluzby", label: "Služby" },
     { href: "#technika", label: "Technika" },

@@ -132,7 +132,7 @@ function frameProgressFromScroll(progress: number): number {
   return (progress - HERO_HOLD) / (1 - HERO_HOLD);
 }
 
-const HERO_LINES = ["Pronájem minibagru", "s obsluhou"] as const;
+const HERO_LINES = site.hero.h1Lines;
 
 function subscribeMobile(onChange: () => void) {
   const mq = window.matchMedia("(max-width: 767px)");
@@ -180,20 +180,20 @@ function HeroCopy() {
     <div ref={rootRef}>
       <h1 className="font-display text-[clamp(1.35rem,calc(0.55rem+5.2vw),4.5rem)] uppercase leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.65)]">
         {HERO_LINES.map((line) => (
-          <span key={line} data-hero="line" className="block whitespace-nowrap">
+          <span key={line} data-hero="line" className="block">
             {line}
           </span>
         ))}
       </h1>
       <p
         data-hero="sub"
-        className="mt-5 max-w-none text-base text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.7)] text-balance md:whitespace-nowrap md:text-lg"
+        className="mt-4 max-w-2xl text-sm leading-relaxed text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.7)] text-balance sm:mt-5 sm:text-base md:text-lg"
       >
         {site.hero.subtitle}
       </p>
       <div
         data-hero="cta"
-        className="relative z-10 mt-7 flex flex-wrap items-center justify-center gap-3 pointer-events-auto"
+        className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 pointer-events-auto sm:mt-7"
       >
         <MagneticPrimaryCta
           href="#kontakt"
@@ -202,9 +202,10 @@ function HeroCopy() {
           {site.hero.cta}
         </MagneticPrimaryCta>
         <Button
-          href="#cenik"
+          href={unwrap(site.phoneHref)}
           variant="outline"
           className="border-white/55 bg-black/45 backdrop-blur-sm hover:border-white hover:bg-black/60"
+          onClick={() => track("phone_click", { source: "hero" })}
         >
           {site.hero.secondary}
         </Button>
@@ -214,7 +215,7 @@ function HeroCopy() {
 }
 
 const heroCopyLayout =
-  "mx-auto flex w-full max-w-4xl flex-col items-center px-4 sm:px-6 pt-[max(9.5rem,calc(11vh+3rem))] text-center pb-[min(52vh,28rem)] md:pt-[max(6.5rem,11vh)] md:pb-[min(54vh,32rem)]";
+  "mx-auto flex w-full max-w-4xl flex-col items-center px-4 sm:px-6 pt-[max(8.5rem,calc(10vh+2.5rem))] text-center pb-[min(42vh,22rem)] md:pt-[max(6.5rem,11vh)] md:pb-[min(54vh,32rem)]";
 
 function StaticHero() {
   const mediaRef = useRef<HTMLDivElement>(null);

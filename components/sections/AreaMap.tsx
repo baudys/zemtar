@@ -41,13 +41,14 @@ const mapFallback = (
   // eslint-disable-next-line @next/next/no-img-element
   <img
     src="/map/oblast.svg"
-    alt="Schéma oblasti do 50 km od Poběžovic"
+    alt="Mapa Domažlicka a okolí – základna Poběžovice"
     className="h-full w-full object-contain bg-void p-2"
   />
 );
 
 /**
- * Interaktivní mapa dosahu. Tmavý XYZ podklad (Esri World Dark Gray).
+ * Interaktivní mapa okolí. Tmavý XYZ podklad (Esri World Dark Gray).
+ * Kružnice jsou orientační, ne tvrdá hranice působnosti.
  * Atribuce je v rohu mapy; při totálním výpadku tiles → SVG fallback.
  */
 export function AreaMap() {
@@ -59,7 +60,7 @@ export function AreaMap() {
         </MapErrorBoundary>
       </div>
       <figcaption className="border-t border-line px-3 py-2 text-center font-mono text-[11px] tracking-wide text-white/45">
-        okruh 10 / 25 / 50 km od Poběžovic
+        základna Poběžovice · orientační vzdálenosti 10 / 25 / 50 km
       </figcaption>
     </figure>
   );

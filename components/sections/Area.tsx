@@ -14,7 +14,7 @@ export function Area() {
 
         <div className="mt-8 max-w-3xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-komatsu-yellow">
-            Obce a města v dosahu
+            Obce a města v okolí
           </p>
           <p className="mt-5 text-base leading-relaxed text-white/70">
             {site.towns.all.map((town, i) => {
