@@ -108,11 +108,11 @@ export function Pricing() {
 
   return (
     <Section id="cenik" tone="deep" className="!border-t-0 !py-12 md:!py-14">
-      <header className="max-w-3xl">
-        <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-5xl lg:text-6xl">
+      <header>
+        <h2 className="font-display text-4xl uppercase leading-[1.15] tracking-tight text-white md:text-6xl lg:text-7xl">
           Ceník
         </h2>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/65 md:mt-3 md:text-base">
+        <p className="mt-2 text-sm leading-relaxed text-white/65 md:mt-3 md:text-base md:whitespace-nowrap">
           {site.pricingDisclaimer}
         </p>
       </header>

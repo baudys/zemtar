@@ -1,41 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
 import { site, siteConfig, unwrap } from "@/content/site";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
-
-/** Static chevron belt — same vocabulary as TrackDivider, no scroll scrub. */
-function MenuTrack({ className = "" }: { className?: string }) {
-  const uid = useId().replace(/:/g, "");
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 320 14"
-      preserveAspectRatio="none"
-      aria-hidden
-    >
-      <defs>
-        <pattern
-          id={`menu-track-${uid}`}
-          width="16"
-          height="14"
-          patternUnits="userSpaceOnUse"
-        >
-          <polygon
-            points="0,1 9,1 14,7 9,13 0,13 5,7"
-            fill="currentColor"
-          />
-        </pattern>
-      </defs>
-      <rect width="320" height="14" fill={`url(#menu-track-${uid})`} />
-    </svg>
-  );
-}
 
 function FullscreenNav({ onClose }: { onClose: () => void }) {
   return (
@@ -70,7 +42,7 @@ function FullscreenNav({ onClose }: { onClose: () => void }) {
         <div className="h-4 sm:h-6" />
       </div>
 
-      <div className="relative flex min-h-0 flex-1 flex-col justify-between px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 sm:px-8 md:px-12">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-between px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-8 sm:px-8 sm:pt-10 md:px-12 md:pt-12">
         <ul className="flex flex-col gap-1 sm:gap-2">
           {site.nav.map((item, i) => (
             <li key={item.href}>
@@ -90,34 +62,17 @@ function FullscreenNav({ onClose }: { onClose: () => void }) {
           ))}
         </ul>
 
-        <div className="nav-fullscreen__foot mt-8 space-y-5 border-t border-white/10 pt-6">
-          <MenuTrack className="h-2.5 w-full text-komatsu-yellow" />
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm text-white/60">{siteConfig.tagline}</p>
-              <a
-                href={unwrap(site.phoneHref)}
-                className="mt-1 block font-display text-2xl text-komatsu-yellow transition hover:text-white sm:text-3xl"
-                onClick={() => {
-                  track("phone_click", { source: "mobile_nav" });
-                  onClose();
-                }}
-              >
-                <Placeholder value={site.phone} />
-              </a>
-              <p className="mt-1 text-sm text-white/60">Domažlicko a okolí</p>
-            </div>
-            <Button
-              href="#kontakt"
-              className="w-full sm:w-auto"
-              onClick={() => {
-                track("cta_click", { source: "mobile_nav" });
-                onClose();
-              }}
-            >
-              {site.hero.cta}
-            </Button>
-          </div>
+        <div className="nav-fullscreen__foot mt-8 border-t border-white/10 pt-6">
+          <a
+            href={unwrap(site.phoneHref)}
+            className="block font-display text-2xl text-komatsu-yellow transition hover:text-white sm:text-3xl"
+            onClick={() => {
+              track("phone_click", { source: "mobile_nav" });
+              onClose();
+            }}
+          >
+            <Placeholder value={site.phone} />
+          </a>
         </div>
       </div>
     </nav>

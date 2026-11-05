@@ -215,13 +215,13 @@ export function Fleet() {
 
   return (
     <Section id="technika" tone="void">
-      <header className="max-w-2xl">
+      <header>
         <h2 className="font-display text-4xl uppercase leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl">
           Technika
         </h2>
-        <p className="mt-2 text-sm text-white/65 sm:mt-3 sm:text-base md:text-lg">
-          Minibagr s nástavci, MAN s plošinou a kontejnery – k čemu slouží uvidíte
-          dole. Bez cen.
+        <p className="mt-2 text-sm text-white/65 sm:mt-3 sm:text-base md:max-w-none md:text-lg md:whitespace-nowrap">
+          Minibagr s nástavci, nákladní automobil s plošinou a kontejnery – k čemu
+          slouží uvidíte dole. Bez cen.
         </p>
       </header>
 

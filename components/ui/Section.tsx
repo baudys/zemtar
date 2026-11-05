@@ -104,7 +104,7 @@ export function SectionHeader({
   }, [title, reduced]);
 
   return (
-    <header ref={rootRef} className={`max-w-3xl ${className}`}>
+    <header ref={rootRef} className={className}>
       {eyebrow ? (
         <p
           ref={eyebrowRef}
@@ -120,7 +120,7 @@ export function SectionHeader({
         {title}
       </h2>
       {children ? (
-        <p className="mt-5 text-base leading-relaxed text-white/65 md:text-lg">
+        <p className="mt-5 text-base leading-relaxed text-white/65 md:text-lg md:whitespace-nowrap">
           {children}
         </p>
       ) : null}
