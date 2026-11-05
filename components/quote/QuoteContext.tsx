@@ -62,8 +62,8 @@ export type FleetSelection = {
   inquirySlug: string;
   slotALabel: string;
   slotAName: string;
-  slotBLabel: string;
-  slotBName: string;
+  slotBLabel?: string;
+  slotBName?: string;
   noteText: string;
 };
 
@@ -88,15 +88,14 @@ export function buildFleetSelection(workId: WorkId): FleetSelection {
   const work = workTypes.find((w) => w.id === workId) ?? workTypes[0]!;
   const [idA, idB] = work.equipmentIds;
   const itemA = equipment.find((e) => e.id === idA);
-  const itemB = equipment.find((e) => e.id === idB);
+  const itemB = idB ? equipment.find((e) => e.id === idB) : undefined;
   const [labelA, labelB] = work.slotLabels;
   const slotAName = itemA?.name ?? idA;
-  const slotBName = itemB?.name ?? idB;
-  const noteText = [
-    `Práce: ${work.label}`,
-    `${labelA}: ${slotAName}`,
-    `${labelB}: ${slotBName}`,
-  ].join("\n");
+  const slotBName = itemB?.name ?? (idB || undefined);
+  const noteLines = [`Práce: ${work.label}`, `${labelA}: ${slotAName}`];
+  if (labelB && slotBName) {
+    noteLines.push(`${labelB}: ${slotBName}`);
+  }
 
   return {
     workId: work.id,
@@ -106,7 +105,7 @@ export function buildFleetSelection(workId: WorkId): FleetSelection {
     slotAName,
     slotBLabel: labelB,
     slotBName,
-    noteText,
+    noteText: noteLines.join("\n"),
   };
 }
 

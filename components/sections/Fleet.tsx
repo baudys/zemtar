@@ -19,10 +19,8 @@ import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Section } from "@/components/ui/Section";
 import { track } from "@vercel/analytics";
-import { isPlaceholderPhotoPath, showPlaceholders } from "@/lib/placeholders";
 
 function StageImage({ item }: { item: EquipmentItem }) {
-  const showEx = showPlaceholders();
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden bg-void">
       <AssetOrPlaceholder
@@ -38,11 +36,6 @@ function StageImage({ item }: { item: EquipmentItem }) {
         className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]"
         aria-hidden
       />
-      {showEx && isPlaceholderPhotoPath(item.image) ? (
-        <span className="absolute right-2 top-2 border border-line bg-void/80 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide text-komatsu-yellow lg:right-3 lg:top-3 lg:text-[10px]">
-          ilustr.
-        </span>
-      ) : null}
     </div>
   );
 }

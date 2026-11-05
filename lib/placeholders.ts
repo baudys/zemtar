@@ -1,3 +1,7 @@
+/** Branded 4:3 stand-in when a Technika / photo asset is missing. */
+export const MISSING_PHOTO_TEMPLATE =
+  "/photos/placeholder/technika-missing.webp";
+
 export function showPlaceholders(): boolean {
   if (process.env.NEXT_PUBLIC_SHOW_PLACEHOLDERS === "1") return true;
   const vercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV;

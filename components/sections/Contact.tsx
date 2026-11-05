@@ -404,10 +404,12 @@ export function Contact() {
                     <dt className="text-white/60">{fleet.slotALabel}</dt>
                     <dd className="text-white">{fleet.slotAName}</dd>
                   </div>
-                  <div>
-                    <dt className="text-white/60">{fleet.slotBLabel}</dt>
-                    <dd className="text-white">{fleet.slotBName}</dd>
-                  </div>
+                  {fleet.slotBLabel && fleet.slotBName ? (
+                    <div>
+                      <dt className="text-white/60">{fleet.slotBLabel}</dt>
+                      <dd className="text-white">{fleet.slotBName}</dd>
+                    </div>
+                  ) : null}
                 </dl>
               </div>
             ) : null}

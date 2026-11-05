@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, type CSSProperties, type ImgHTMLAttributes } from "react";
+import { MISSING_PHOTO_TEMPLATE } from "@/lib/placeholders";
 
 type Props = {
   src: string;
@@ -30,25 +31,22 @@ export function AssetOrPlaceholder({
   loading = "lazy",
 }: Props) {
   const [missing, setMissing] = useState(false);
-
-  if (missing) {
-    return (
-      <div
-        className={`flex items-center justify-center bg-gradient-to-br from-soil via-[#3a2818] to-ink p-4 text-center text-sm text-sand ${className}`}
-        style={style}
-        role="img"
-        aria-label={`PODKLAD CHYBÍ: ${src}`}
-      >
-        PODKLAD CHYBÍ: {src}
-      </div>
-    );
-  }
+  const resolvedSrc =
+    missing && src !== MISSING_PHOTO_TEMPLATE
+      ? MISSING_PHOTO_TEMPLATE
+      : src;
+  const usingTemplate = resolvedSrc === MISSING_PHOTO_TEMPLATE;
+  const resolvedAlt = usingTemplate
+    ? alt
+      ? `${alt} (fotografie připravujeme)`
+      : "Fotografie připravujeme"
+    : alt;
 
   if (asBackground) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={src}
+        src={resolvedSrc}
         alt=""
         aria-hidden
         width={width}
@@ -57,7 +55,9 @@ export function AssetOrPlaceholder({
         decoding="async"
         className={`pointer-events-none absolute inset-0 h-full w-full object-cover ${className}`}
         style={style}
-        onError={() => setMissing(true)}
+        onError={() => {
+          if (!usingTemplate) setMissing(true);
+        }}
       />
     );
   }
@@ -66,28 +66,34 @@ export function AssetOrPlaceholder({
     if (fill) {
       return (
         <Image
-          src={src}
-          alt={alt}
+          key={resolvedSrc}
+          src={resolvedSrc}
+          alt={resolvedAlt}
           fill
           sizes={sizes}
           className={className}
           style={style}
           loading={loading}
-          onError={() => setMissing(true)}
+          onError={() => {
+            if (!usingTemplate) setMissing(true);
+          }}
         />
       );
     }
     return (
       <Image
-        src={src}
-        alt={alt}
+        key={resolvedSrc}
+        src={resolvedSrc}
+        alt={resolvedAlt}
         width={width}
         height={height}
         sizes={sizes}
         className={className}
         style={style}
         loading={loading}
-        onError={() => setMissing(true)}
+        onError={() => {
+          if (!usingTemplate) setMissing(true);
+        }}
       />
     );
   }
@@ -95,15 +101,17 @@ export function AssetOrPlaceholder({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={src}
-      alt={alt}
+      src={resolvedSrc}
+      alt={resolvedAlt}
       width={width}
       height={height}
       loading={loading}
       decoding="async"
       className={className}
       style={style}
-      onError={() => setMissing(true)}
+      onError={() => {
+        if (!usingTemplate) setMissing(true);
+      }}
     />
   );
 }

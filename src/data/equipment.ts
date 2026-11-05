@@ -12,6 +12,7 @@ export type WorkId =
   | "vykop"
   | "uzky-vykop"
   | "vrtani"
+  | "prosevani"
   | "katrovani"
   | "teren"
   | "odvoz-suti"
@@ -52,12 +53,12 @@ export type WorkType = {
   hook: string;
   /** Krátké vysvětlení po výběru. */
   explanation: string;
-  /** Popisek slotů ve výsledku (např. Stroj + Nástavec). */
-  slotLabels: [string, string];
+  /** Popisek slotů ve výsledku (např. Stroj + Nástavec). Druhý slot jen při konkrétním nástavci. */
+  slotLabels: [string] | [string, string];
   /** Slug pro `?sluzba=` v poptávce. */
   inquirySlug: string;
-  /** Primární doporučené položky (výsledek sestavy). */
-  equipmentIds: [string, string];
+  /** Doporučené položky (1 = jen stroj, 2 = stroj + nástavec/kontejner). */
+  equipmentIds: [string] | [string, string];
 };
 
 export const workTypes: WorkType[] = [
@@ -90,23 +91,33 @@ export const workTypes: WorkType[] = [
     equipmentIds: ["minibagr", "vrtak-ht4"],
   },
   {
+    id: "prosevani",
+    label: "Prosévání",
+    hook: "Oddělení zeminy a drobného materiálu",
+    explanation: "Prosévání zvládne minibagr s prosévací lžící 600 mm.",
+    slotLabels: ["Stroj", "Nástavec"],
+    inquirySlug: "prosevani",
+    equipmentIds: ["minibagr", "lzice-prosevaci-600"],
+  },
+  {
     id: "katrovani",
     label: "Kátrování",
-    hook: "Prosévání a oddělení zeminy",
-    explanation: "Kátrování zvládne minibagr s prosévací lžící 600 mm.",
-    slotLabels: ["Stroj", "Nástavec"],
+    hook: "Oddělení a třídění zeminy",
+    explanation:
+      "Kátrování řešíme minibagrem – konkrétní nástavec zatím doplníme podle zakázky.",
+    slotLabels: ["Stroj"],
     inquirySlug: "katrovani",
-    equipmentIds: ["minibagr", "lzice-prosevaci-600"],
+    equipmentIds: ["minibagr"],
   },
   {
     id: "teren",
     label: "Terénní úpravy",
     hook: "Srovnání a modelace pozemku",
     explanation:
-      "Terén upravíme minibagrem – přesný nástavec doladíme podle pozemku.",
+      "Terén upravíme minibagrem – svahová lžíce, hrábě nebo zubová podle pozemku.",
     slotLabels: ["Stroj", "Nástavec"],
     inquirySlug: "teren",
-    equipmentIds: ["minibagr", "lzice-zubova-600"],
+    equipmentIds: ["minibagr", "lzice-svahova"],
   },
   {
     id: "odvoz-suti",
@@ -147,7 +158,14 @@ export const equipment: EquipmentItem[] = [
     ],
     image: "/photos/pc38mr-studio.webp",
     imageAlt: "Minibagr Komatsu PC38MR",
-    workIds: ["vykop", "uzky-vykop", "vrtani", "katrovani", "teren"],
+    workIds: [
+      "vykop",
+      "uzky-vykop",
+      "vrtani",
+      "prosevani",
+      "katrovani",
+      "teren",
+    ],
   },
   {
     id: "man-tgl",
@@ -239,7 +257,7 @@ export const equipment: EquipmentItem[] = [
     name: "Prosévací lžíce Triga 600 mm",
     shortName: "Prosévací 600",
     kind: "nastavec",
-    description: "Roštová lžíce na kátrování a prosévání zeminy.",
+    description: "Roštová lžíce na prosévání zeminy a oddělení drobného materiálu.",
     params: [
       { label: "Šířka", value: "600 mm" },
       { label: "Hmotnost", value: "126 kg" },
@@ -250,7 +268,7 @@ export const equipment: EquipmentItem[] = [
     imageAlt: "Prosévací (roštová) lžíce Triga 600 mm",
     plateImage: "/technika/lzice-prosevaci-stitek.jpg",
     plateImageAlt: "Štítek prosévací lžíce Triga 600 mm",
-    workIds: ["katrovani"],
+    workIds: ["prosevani"],
   },
   {
     id: "lzice-zubova-600",
@@ -290,6 +308,33 @@ export const equipment: EquipmentItem[] = [
     plateImageAlt: "Štítek lžíce Triga 300 mm",
     workIds: ["uzky-vykop"],
   },
+  {
+    id: "lzice-svahova",
+    name: "Svahová lžíce",
+    shortName: "Svahová lžíce",
+    kind: "nastavec",
+    description:
+      "Srovnání a modelace svahů a povrchů při terénních úpravách.",
+    params: [],
+    image: "/photos/placeholder/technika-missing.webp",
+    imageAlt: "Svahová lžíce na minibagr",
+    workIds: ["teren"],
+  },
+  {
+    id: "hrabe-120",
+    name: "Hrábě 120 cm s hydraulickým náklopem",
+    shortName: "Hrábě 120 cm",
+    kind: "nastavec",
+    description:
+      "Hrábě šířky 120 cm s hydraulickým náklopem – úklid a srovnání povrchu při terénních úpravách.",
+    params: [
+      { label: "Šířka", value: "120 cm" },
+      { label: "Náklop", value: "hydraulický" },
+    ],
+    image: "/photos/placeholder/technika-missing.webp",
+    imageAlt: "Hrábě 120 cm s hydraulickým náklopem",
+    workIds: ["teren"],
+  },
 ];
 
 export function getEquipment(id: string): EquipmentItem | undefined {
@@ -323,13 +368,15 @@ export const fleetUnits: FleetUnit[] = [
       "lzice-zubova-600",
       "lzice-300",
       "lzice-prosevaci-600",
+      "lzice-svahova",
+      "hrabe-120",
       "vrtak-ht4",
     ],
     accessoryLabel: "Nástavce",
   },
   {
     id: "kamion",
-    shortName: "MAN TGL",
+    shortName: "Nákladní automobil",
     primaryId: "man-tgl",
     accessoryIds: ["plosina-4m", "kontejner-sutovy", "kontejner-plosinovy"],
     accessoryLabel: "Plošina a kontejnery",
