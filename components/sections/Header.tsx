@@ -42,12 +42,12 @@ export function Header() {
           />
         </Link>
 
-        <nav className="hidden items-center gap-5 lg:flex" aria-label="Hlavní navigace">
+        <nav className="hidden items-center gap-5 xl:flex" aria-label="Hlavní navigace">
           {site.nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="text-sm text-white/80 transition hover:text-white"
+              className="whitespace-nowrap text-sm text-white/80 transition hover:text-white"
             >
               {item.label}
             </a>
@@ -71,7 +71,7 @@ export function Header() {
           </Button>
           <button
             type="button"
-            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center border border-line lg:hidden"
+            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center border border-line xl:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Zavřít menu" : "Otevřít menu"}
@@ -102,7 +102,7 @@ export function Header() {
       {open ? (
         <nav
           id="mobile-nav"
-          className="border-t border-white/10 bg-ink/95 px-4 py-4 lg:hidden"
+          className="border-t border-white/10 bg-ink/95 px-4 py-4 xl:hidden"
         >
           <ul className="space-y-3">
             {site.nav.map((item) => (

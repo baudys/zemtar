@@ -15,7 +15,7 @@ export function Faq() {
 
   return (
     <Section id="faq" tone="void" className="!border-t-0">
-      <SectionHeader title="FAQ">
+      <SectionHeader title="Často kladené otázky">
         Nejčastější otázky před poptávkou.
       </SectionHeader>
 
