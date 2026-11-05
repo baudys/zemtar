@@ -110,6 +110,38 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Fullscreen nav — dig-reveal stagger (panel stays opaque; only links move) */
+@keyframes nav-link-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.nav-fullscreen__link {
+  opacity: 0;
+  animation: nav-link-rise 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.nav-fullscreen__foot {
+  opacity: 0;
+  animation: nav-link-rise 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.28s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-fullscreen__link,
+  .nav-fullscreen__foot {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .font-mono {
   font-family: var(--font-mono), ui-monospace, monospace;
 }
